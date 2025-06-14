@@ -12,6 +12,7 @@ const Index = () => {
   const [step, setStep] = useState<GameStep>('name');
   const [playerName, setPlayerName] = useState<string>('');
   const [difficulty, setDifficulty] = useState<DifficultyLevel>('medium');
+  const [previousStep, setPreviousStep] = useState<GameStep>('name');
 
   const handleNameSubmit = (name: string) => {
     setPlayerName(name);
@@ -24,13 +25,12 @@ const Index = () => {
   };
 
   const handleShowTutorial = () => {
+    setPreviousStep(step);
     setStep('tutorial');
   };
 
   const handleCloseTutorial = () => {
-    // Return to the previous step before tutorial
-    if (!playerName) setStep('name');
-    else setStep('difficulty');
+    setStep(previousStep);
   }
 
   const renderStep = () => {
@@ -51,7 +51,7 @@ const Index = () => {
           onNameChange={() => setStep('name')}
         />;
       case 'tutorial':
-        return <Tutorial onClose={() => window.location.reload()} />; // simple reload to reset state
+        return <Tutorial onClose={handleCloseTutorial} />;
       default:
         return <PlayerNameDialog onSubmit={handleNameSubmit} onTutorial={handleShowTutorial} />;
     }
