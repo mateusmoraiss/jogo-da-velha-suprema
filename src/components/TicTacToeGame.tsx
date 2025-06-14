@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,17 +5,16 @@ import { Badge } from '@/components/ui/badge';
 import { useInfiniteTicTacToe } from '@/hooks/useInfiniteTicTacToe';
 import { difficultySettings } from '@/constants/difficultySettings';
 import { DifficultyLevel } from '@/types/gameTypes';
-import { Sparkles, RotateCcw, Settings, Clock, User, Users } from 'lucide-react';
+import { Sparkles, RotateCcw, Settings, Clock, User } from 'lucide-react';
 
 interface TicTacToeGameProps {
   playerName: string;
   difficulty: DifficultyLevel;
   onDifficultyChange: () => void;
   onNameChange: () => void;
-  onModeChange: () => void;
 }
 
-const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChange, onModeChange }: TicTacToeGameProps) => {
+const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChange }: TicTacToeGameProps) => {
   const {
     board,
     currentPlayer,
@@ -156,14 +154,6 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
                   >
                     <Settings className="w-4 h-4 mr-2" />
                     Mudar Nível
-                  </Button>
-                   <Button 
-                    onClick={onModeChange}
-                    variant="outline"
-                    className="bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50 px-4 py-2"
-                  >
-                    <Users className="w-4 h-4 mr-2" />
-                    Mudar Modo
                   </Button>
                   <Button 
                     onClick={onNameChange}

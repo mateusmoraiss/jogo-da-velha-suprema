@@ -17,5 +17,3 @@ export interface GameState {
 }
 
 export type DifficultyLevel = 'easy' | 'medium' | 'hard' | 'nightmare' | 'insane' | 'godlike' | 'armageddon';
-
-export type GameMode = 'classic' | 'dual';
