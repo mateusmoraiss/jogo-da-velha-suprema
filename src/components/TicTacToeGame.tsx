@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -229,27 +228,22 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
             </div>
           </div>
 
-          {/* Container com altura fixa para timer - evita movimento do layout */}
-          <div className="h-16 flex flex-col justify-center">
-            {currentPlayer === 'X' && isGameActive && !winner ? (
-              <div className="space-y-2">
-                <div className="flex items-center justify-center gap-2 text-white/80">
-                  <Clock className="w-4 h-4" />
-                  <span className="text-sm font-medium">
-                    Tempo: {timeLeft.toFixed(1)}s
-                  </span>
-                </div>
-                <div className="w-full bg-gray-700 rounded-full h-2">
-                  <div 
-                    className={`h-2 rounded-full transition-all duration-100 ${getTimeBarColor()}`}
-                    style={{ width: `${(timeLeft / difficultySettings[difficulty].time) * 100}%` }}
-                  />
-                </div>
+          {currentPlayer === 'X' && isGameActive && !winner && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-center gap-2 text-white/80">
+                <Clock className="w-4 h-4" />
+                <span className="text-sm font-medium">
+                  Tempo: {timeLeft.toFixed(1)}s
+                </span>
               </div>
-            ) : (
-              <div className="h-12"></div>
-            )}
-          </div>
+              <div className="w-full bg-gray-700 rounded-full h-2">
+                <div 
+                  className={`h-2 rounded-full transition-all duration-100 ${getTimeBarColor()}`}
+                  style={{ width: `${(timeLeft / difficultySettings[difficulty].time) * 100}%` }}
+                />
+              </div>
+            </div>
+          )}
 
           <div className="text-center text-xs text-gray-400">
             {winner ? (
@@ -259,8 +253,7 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
             )}
           </div>
 
-          {/* Container com altura fixa para status do jogo - evita movimento do layout */}
-          <div className="h-32 flex flex-col justify-center">
+          <div className="text-center">
             {winner ? (
               <div className="space-y-4">
                 <div className="text-2xl font-bold text-yellow-400">
@@ -294,9 +287,11 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
               </div>
             ) : (
               <div className="text-xl font-semibold text-gray-200">
-                Vez de: <span className={currentPlayer === 'X' ? 'text-blue-400' : 'text-cyan-400'}>
-                  {currentPlayer === 'X' ? playerName : 'Computador'}
-                </span>
+                {currentPlayer === 'O' ? (
+                  <span className="text-cyan-400">Computador jogando...</span>
+                ) : (
+                  <>Sua vez, <span className="text-blue-400">{playerName}</span>!</>
+                )}
               </div>
             )}
           </div>
