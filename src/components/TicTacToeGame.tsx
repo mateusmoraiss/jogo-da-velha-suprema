@@ -53,9 +53,11 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [selectedPosition, currentPlayer, isGameActive, winner, makeMove, updateSelectedPosition]);
 
+  // Mouse apenas seleciona, não clica para jogar
   const handleCellClick = (index: number) => {
+    // Mouse click apenas seleciona a célula, não faz a jogada
     if (currentPlayer === 'X' && isGameActive && !winner) {
-      makeMove(index);
+      updateSelectedPosition(index);
     }
   };
 
@@ -135,7 +137,7 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
           )}
 
           <div className="text-center text-xs text-gray-400">
-            Use as setas do teclado para navegar • ESPAÇO para confirmar
+            Use as setas para navegar • Mouse para selecionar • ESPAÇO para confirmar
           </div>
 
           <div className="text-center">

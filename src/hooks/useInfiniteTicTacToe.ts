@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { GameState, DifficultyLevel, Player } from '@/types/gameTypes';
 import { difficultySettings } from '@/constants/difficultySettings';
@@ -20,6 +19,7 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     selectedPosition: 4
   });
   const [pieceOrder, setPieceOrder] = useState<{ position: number; player: Player }[]>([]);
+  const [removalCycle, setRemovalCycle] = useState<3 | 4>(3); // Alterna entre 3 e 4
 
   const makeMove = useCallback((index: number) => {
     if (!gameState.isGameActive || gameState.board[index] || gameState.winner) {
@@ -38,13 +38,12 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     const isBoardFull = !newBoard.includes(null);
 
     if (isBoardFull) {
-      // Identifica as 4 peças mais antigas do jogador 'X'
+      // Identifica as peças mais antigas de cada jogador baseado no ciclo atual
       const playerXPieces = currentPieceOrder.filter(p => p.player === 'X');
-      const piecesToRemoveX = playerXPieces.slice(0, 4);
+      const piecesToRemoveX = playerXPieces.slice(0, removalCycle);
       
-      // Identifica as 4 peças mais antigas do jogador 'O'
       const playerOPieces = currentPieceOrder.filter(p => p.player === 'O');
-      const piecesToRemoveO = playerOPieces.slice(0, 4);
+      const piecesToRemoveO = playerOPieces.slice(0, removalCycle);
 
       // Combina todas as peças a serem removidas
       const allPiecesToRemove = [...piecesToRemoveX, ...piecesToRemoveO];
@@ -57,12 +56,14 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       
       // 4. Atualiza o histórico de ordem das peças
       currentPieceOrder = currentPieceOrder.filter(p => !positionsToRemove.includes(p.position));
+
+      // 5. Alterna o ciclo de remoção para a próxima vez
+      setRemovalCycle(prev => prev === 3 ? 4 : 3);
     }
     
-    // Verifica o vencedor com o novo estado do tabuleiro
+    // ... keep existing code (winner check, history update, score update, state update)
     const winner = checkWinner(newBoard);
     
-    // Atualiza o histórico de jogadas
     const newHistory = [...gameState.moveHistory];
     const playerDisplayName = currentPlayer === 'X' ? playerName : 'Computador';
     const moveDescription = `${playerDisplayName} jogou na posição ${index + 1}`;
@@ -77,7 +78,6 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       newHistory.splice(0, newHistory.length - 10);
     }
 
-    // Atualiza o placar
     let newPlayerScore = gameState.playerScore;
     let newComputerScore = gameState.computerScore;
     if (winner === 'X') {
@@ -86,7 +86,6 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       newComputerScore++;
     }
 
-    // Atualiza os estados de uma vez
     setPieceOrder(currentPieceOrder);
     setGameState(prevState => ({
       ...prevState,
@@ -100,8 +99,9 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       moveCount: prevState.moveCount + 1,
       timeLeft: difficultySettings[prevState.difficulty].time,
     }));
-  }, [gameState, pieceOrder, playerName]);
+  }, [gameState, pieceOrder, playerName, removalCycle]);
 
+  // ... keep existing code (updateSelectedPosition, timer effects, computer move effect)
   const updateSelectedPosition = useCallback((newPosition: number) => {
     setGameState(prev => ({
       ...prev,
@@ -109,7 +109,6 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     }));
   }, []);
 
-  // Enhanced timer effect with more precise timing
   useEffect(() => {
     if (gameState.currentPlayer === 'X' && gameState.isGameActive && !gameState.winner && gameState.timeLeft > 0) {
       const timer = setTimeout(() => {
@@ -123,7 +122,6 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     }
   }, [gameState.timeLeft, gameState.currentPlayer, gameState.isGameActive, gameState.winner]);
 
-  // Time out effect - player loses turn when time runs out
   useEffect(() => {
     if (gameState.currentPlayer === 'X' && gameState.timeLeft <= 0 && gameState.isGameActive && !gameState.winner) {
       const newHistory = [...gameState.moveHistory, `${playerName} perdeu o turno - tempo esgotado!`];
@@ -132,12 +130,11 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
         ...prev,
         currentPlayer: 'O',
         timeLeft: difficultySettings[prev.difficulty].time,
-        moveHistory: newHistory.slice(-10) // Keep only last 10 moves
+        moveHistory: newHistory.slice(-10)
       }));
     }
   }, [gameState.timeLeft, gameState.currentPlayer, gameState.isGameActive, gameState.winner, playerName]);
 
-  // Computer move effect - plays instantly
   useEffect(() => {
     if (gameState.currentPlayer === 'O' && gameState.isGameActive && !gameState.winner) {
       const computerMoveIndex = getComputerMove(gameState.board, gameState.difficulty);
@@ -160,6 +157,7 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       selectedPosition: 4
     }));
     setPieceOrder([]);
+    setRemovalCycle(3); // Reset para 3
   }, []);
 
   const changeDifficulty = useCallback((newDifficulty: DifficultyLevel) => {
@@ -176,6 +174,7 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       selectedPosition: 4
     }));
     setPieceOrder([]);
+    setRemovalCycle(3); // Reset para 3
   }, []);
 
   return {

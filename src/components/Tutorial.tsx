@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Zap, Brain, Gamepad2, Award, Github } from 'lucide-react';
+import { Zap, Brain, Gamepad2, Award, Github, Mouse, Keyboard } from 'lucide-react';
 
 interface TutorialProps {
   onClose: () => void;
@@ -43,9 +44,36 @@ const Tutorial = ({ onClose }: TutorialProps) => {
                 <span>Como Jogar</span>
               </div>
               <div className="space-y-3 text-gray-300">
-                 <p>Controles: Use as <strong className="text-white">Setas do Teclado</strong> para mover e <strong className="text-white">ESPAÇO</strong> para confirmar a jogada.</p>
-                 <p>O jogo é <strong className="text-white">infinito</strong>. Se um jogador tiver 4 peças, as 2 mais antigas são removidas ao fazer uma nova jogada.</p>
+                 <p>O jogo é <strong className="text-white">infinito</strong>. Quando o tabuleiro encher, as peças mais antigas de cada jogador são removidas (alternando entre 3 e 4 peças).</p>
                  <p>O tempo é seu inimigo. Se o cronômetro zerar, você perde a vez.</p>
+                 <p>Apenas <strong className="text-white">ESPAÇO</strong> confirma jogadas - mouse e setas apenas selecionam!</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Controles */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-gray-700 pt-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 text-xl font-semibold text-blue-400">
+                <Keyboard className="w-6 h-6" />
+                <span>Controles do Teclado</span>
+              </div>
+              <div className="space-y-2 text-gray-300 text-sm">
+                <p><strong className="text-white">Setas:</strong> Navegam entre os quadrados</p>
+                <p><strong className="text-white">ESPAÇO:</strong> Confirma a jogada na posição selecionada</p>
+                <p className="text-yellow-400">⚠️ Apenas ESPAÇO faz jogadas!</p>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 text-xl font-semibold text-cyan-400">
+                <Mouse className="w-6 h-6" />
+                <span>Controles do Mouse</span>
+              </div>
+              <div className="space-y-2 text-gray-300 text-sm">
+                <p><strong className="text-white">Hover:</strong> Seleciona automaticamente o quadrado</p>
+                <p><strong className="text-white">Click:</strong> Apenas seleciona (não joga!)</p>
+                <p>Use <strong className="text-white">ESPAÇO</strong> para confirmar após selecionar</p>
               </div>
             </div>
           </div>
