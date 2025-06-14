@@ -31,66 +31,58 @@ const DualTicTacToeGame = ({
     updateSelectedPosition,
     makeMove,
     resetGame,
-    changeDifficulty,
   } = useDualTicTacToe(playerName, difficulty);
 
-  const games = [game1, game2];
   const totalPlayerScore = game1.playerScore + game2.playerScore;
   const totalComputerScore = game1.computerScore + game2.computerScore;
   const isMatchOver = !game1.isGameActive && !game2.isGameActive;
   const activeGame = activeBoard === 1 ? game1 : game2;
 
-  // Keyboard navigation and move
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
+      if (isMatchOver) return;
+
       let newPosition = sharedSelectedPosition;
       if (event.key === 'ArrowUp' && newPosition > 2) newPosition -= 3;
       else if (event.key === 'ArrowDown' && newPosition < 6) newPosition += 3;
       else if (event.key === 'ArrowLeft' && newPosition % 3 !== 0) newPosition -= 1;
       else if (event.key === 'ArrowRight' && newPosition % 3 !== 2) newPosition += 1;
 
-      if (newPosition !== sharedSelectedPosition) updateSelectedPosition(newPosition);
+      if (newPosition !== sharedSelectedPosition) {
+        updateSelectedPosition(newPosition);
+      }
 
-      // Só permite ação se o tabuleiro ativo e é a vez do jogador
       if (event.key === ' ') {
         event.preventDefault();
-        const gameToPlay = activeBoard === 1 ? game1 : game2;
-        if (gameToPlay.isGameActive && gameToPlay.currentPlayer === 'X') {
+        if (activeGame.isGameActive && activeGame.currentPlayer === 'X') {
           makeMove(activeBoard, sharedSelectedPosition);
         }
       }
     };
+
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    activeBoard,
-    sharedSelectedPosition,
-    updateSelectedPosition,
-    makeMove,
-    game1.isGameActive,
-    game2.isGameActive,
-    game1.currentPlayer,
-    game2.currentPlayer,
-  ]);
+  }, [activeBoard, sharedSelectedPosition, updateSelectedPosition, makeMove, activeGame, isMatchOver]);
 
   const getCellClass = (cell: 'X' | 'O' | null, index: number, boardNum: number) => {
-    const baseClass =
-      'w-16 h-16 md:w-20 md:h-20 bg-gray-800/50 backdrop-blur-sm border-2 border-gray-600 rounded-xl flex items-center justify-center text-3xl font-bold transition-all duration-300';
-    const selectedClass =
-      index === sharedSelectedPosition && boardNum + 1 === activeBoard
-        ? 'ring-2 ring-yellow-400 ring-opacity-75 bg-yellow-500/10'
-        : '';
+    const baseClass = 'w-16 h-16 md:w-20 md:h-20 bg-gray-800/50 backdrop-blur-sm border-2 border-gray-600 rounded-xl flex items-center justify-center text-3xl font-bold transition-all duration-300';
+    const selectedClass = index === sharedSelectedPosition && boardNum + 1 === activeBoard
+      ? 'ring-2 ring-yellow-400 ring-opacity-75 bg-yellow-500/10'
+      : '';
+    
     const isActiveBoard = boardNum + 1 === activeBoard;
-    const isPlayerTurn = isActiveBoard && activeGame.currentPlayer === 'X';
-    const turnClass = isPlayerTurn
+    const canPlay = isActiveBoard && activeGame.currentPlayer === 'X' && activeGame.isGameActive && !cell;
+    const turnClass = canPlay
       ? 'cursor-pointer hover:bg-gray-700/50 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20'
       : 'cursor-not-allowed opacity-60';
 
-    if (cell === 'X')
+    if (cell === 'X') {
       return `${baseClass} ${selectedClass} text-blue-400 bg-blue-500/20 border-blue-500/40 shadow-lg shadow-blue-500/20`;
-    if (cell === 'O')
+    }
+    if (cell === 'O') {
       return `${baseClass} ${selectedClass} text-cyan-400 bg-cyan-500/20 border-cyan-500/40 shadow-lg shadow-cyan-500/20`;
+    }
 
     return `${baseClass} ${selectedClass} ${turnClass} hover:border-gray-500`;
   };
@@ -115,8 +107,10 @@ const DualTicTacToeGame = ({
   };
 
   const handleCellClick = (boardIndex: 1 | 2, cellIndex: number) => {
+    if (isMatchOver) return;
+    
     const game = boardIndex === 1 ? game1 : game2;
-    if (activeBoard === boardIndex && game.isGameActive && game.currentPlayer === 'X') {
+    if (activeBoard === boardIndex && game.isGameActive && game.currentPlayer === 'X' && !game.board[cellIndex]) {
       makeMove(boardIndex, cellIndex);
     }
   };
@@ -125,10 +119,18 @@ const DualTicTacToeGame = ({
     const game = boardNum === 0 ? game1 : game2;
     const isActive = boardNum + 1 === activeBoard;
 
-    if (game.winner) return `${game.winner === 'X' ? playerName : 'Computador'} Venceu!`;
-    if (game.isGameActive && game.currentPlayer === 'O') return 'Computador jogando...';
-    if (game.isGameActive && isActive && game.currentPlayer === 'X') return 'Sua vez!';
-    if (!game.isGameActive && !game.winner) return 'Empate!';
+    if (game.winner) {
+      return `${game.winner === 'X' ? playerName : 'Computador'} Venceu!`;
+    }
+    if (!game.isGameActive && !game.winner) {
+      return 'Empate!';
+    }
+    if (game.currentPlayer === 'O') {
+      return 'Computador jogando...';
+    }
+    if (isActive && game.currentPlayer === 'X') {
+      return 'Sua vez!';
+    }
     return 'Aguardando...';
   };
 
@@ -143,35 +145,27 @@ const DualTicTacToeGame = ({
             </CardTitle>
             <Sparkles className="w-6 h-6 text-yellow-400" />
           </div>
+
           <div className="flex items-center justify-between">
-            <Badge
-              variant="outline"
-              className="bg-blue-500/20 text-blue-400 border-blue-500/40 px-4 py-2 text-lg"
-            >
+            <Badge variant="outline" className="bg-blue-500/20 text-blue-400 border-blue-500/40 px-4 py-2 text-lg">
               {playerName}: {totalPlayerScore}
             </Badge>
+            
             <div className="flex flex-col items-center">
-              <Badge
-                variant="outline"
-                className={`${getDifficultyColor()} bg-gray-800/50 border-gray-600 px-3 py-1 text-sm`}
-              >
+              <Badge variant="outline" className={`${getDifficultyColor()} bg-gray-800/50 border-gray-600 px-3 py-1 text-sm`}>
                 {difficulty.toUpperCase()}
               </Badge>
-              <Badge
-                variant="outline"
-                className="mt-1 bg-purple-500/20 text-purple-300 border-purple-500/30 px-3 py-1 text-xs"
-              >
+              <Badge variant="outline" className="mt-1 bg-purple-500/20 text-purple-300 border-purple-500/30 px-3 py-1 text-xs">
                 MODO SUPREMO
               </Badge>
             </div>
-            <Badge
-              variant="outline"
-              className="bg-cyan-500/20 text-cyan-400 border-cyan-500/40 px-4 py-2 text-lg"
-            >
+            
+            <Badge variant="outline" className="bg-cyan-500/20 text-cyan-400 border-cyan-500/40 px-4 py-2 text-lg">
               Computador: {totalComputerScore}
             </Badge>
           </div>
-          {activeGame.isGameActive && !isMatchOver && (
+
+          {!isMatchOver && activeGame.isGameActive && activeGame.currentPlayer === 'X' && (
             <div className="space-y-2">
               <div className="flex items-center justify-center gap-2 text-white/80">
                 <Clock className="w-4 h-4" />
@@ -189,39 +183,39 @@ const DualTicTacToeGame = ({
               </div>
             </div>
           )}
+
           <div className="text-center text-xs text-gray-400">
-            Use as setas do teclado para navegar • ESPAÇO para confirmar • Jogue no tabuleiro{' '}
-            {activeBoard}
+            Use as setas do teclado para navegar • ESPAÇO para confirmar • Jogue no tabuleiro {activeBoard}
           </div>
-          <div className="text-center">
-            {isMatchOver && (
-              <div className="space-y-4">
-                <div className="text-2xl font-bold text-yellow-400">
-                  {totalPlayerScore > totalComputerScore && `🎉 ${playerName} Venceu a partida! 🎉`}
-                  {totalComputerScore > totalPlayerScore && `🎉 Computador Venceu a partida! 🎉`}
-                  {totalComputerScore === totalPlayerScore && `😲 Empate incrível! 😲`}
-                </div>
-                <div className="flex gap-2 justify-center flex-wrap">
-                  <Button onClick={resetGame} className="bg-gradient-to-r from-blue-600 to-cyan-600">
-                    <RotateCcw className="w-4 h-4 mr-2" /> Jogar Novamente
-                  </Button>
-                  <Button onClick={onDifficultyChange} variant="outline">
-                    <Settings className="w-4 h-4 mr-2" /> Mudar Nível
-                  </Button>
-                  <Button onClick={onModeChange} variant="outline">
-                    <Users className="w-4 h-4 mr-2" /> Mudar Modo
-                  </Button>
-                  <Button onClick={onNameChange} variant="outline">
-                    <User className="w-4 h-4 mr-2" /> Trocar Nome
-                  </Button>
-                </div>
+
+          {isMatchOver && (
+            <div className="space-y-4">
+              <div className="text-2xl font-bold text-yellow-400">
+                {totalPlayerScore > totalComputerScore && `🎉 ${playerName} Venceu a partida! 🎉`}
+                {totalComputerScore > totalPlayerScore && `🎉 Computador Venceu a partida! 🎉`}
+                {totalComputerScore === totalPlayerScore && `😲 Empate incrível! 😲`}
               </div>
-            )}
-          </div>
+              <div className="flex gap-2 justify-center flex-wrap">
+                <Button onClick={resetGame} className="bg-gradient-to-r from-blue-600 to-cyan-600">
+                  <RotateCcw className="w-4 h-4 mr-2" /> Jogar Novamente
+                </Button>
+                <Button onClick={onDifficultyChange} variant="outline">
+                  <Settings className="w-4 h-4 mr-2" /> Mudar Nível
+                </Button>
+                <Button onClick={onModeChange} variant="outline">
+                  <Users className="w-4 h-4 mr-2" /> Mudar Modo
+                </Button>
+                <Button onClick={onNameChange} variant="outline">
+                  <User className="w-4 h-4 mr-2" /> Trocar Nome
+                </Button>
+              </div>
+            </div>
+          )}
         </CardHeader>
+
         <CardContent className="space-y-6">
           <div className="flex flex-col lg:flex-row gap-8 justify-center items-center">
-            {games.map((game, boardNum) => (
+            {[game1, game2].map((game, boardNum) => (
               <div key={boardNum} className="flex flex-col items-center gap-4">
                 <div className="text-center">
                   <div className="text-lg font-semibold mb-2">Tabuleiro {boardNum + 1}</div>
@@ -238,6 +232,7 @@ const DualTicTacToeGame = ({
                     {getBoardStatus(boardNum)}
                   </Badge>
                 </div>
+
                 <div
                   className={`grid grid-cols-3 gap-2 w-fit ${
                     boardNum + 1 === activeBoard ? 'ring-2 ring-blue-400/50 rounded-xl p-2' : 'opacity-60'
@@ -253,12 +248,11 @@ const DualTicTacToeGame = ({
                     </div>
                   ))}
                 </div>
-                <div className="text-xs text-gray-400 h-6 mt-1">
-                  {/* Exibe histórico de jogadas recentes */}
-                  {game.moveHistory.length > 0 &&
-                    game.moveHistory.slice(-2).reverse().map((move, i) => (
-                      <div key={i}>{move}</div>
-                    ))}
+
+                <div className="text-xs text-gray-400 h-12 mt-1 text-center">
+                  {game.moveHistory.slice(-2).reverse().map((move, i) => (
+                    <div key={i}>{move}</div>
+                  ))}
                 </div>
               </div>
             ))}
