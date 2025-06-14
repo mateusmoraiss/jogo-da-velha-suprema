@@ -18,7 +18,7 @@ interface GameState {
   difficulty: DifficultyLevel;
 }
 
-const difficultySettings = {
+export const difficultySettings = {
   easy: { time: 10, aiLevel: 0.3 },
   medium: { time: 7, aiLevel: 0.5 },
   hard: { time: 5, aiLevel: 0.7 },

@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useInfiniteTicTacToe } from '@/hooks/useInfiniteTicTacToe';
+import { useInfiniteTicTacToe, difficultySettings } from '@/hooks/useInfiniteTicTacToe';
 import PlayerNameDialog from './PlayerNameDialog';
 import DifficultySelector, { DifficultyLevel } from './DifficultySelector';
 import { Sparkles, RotateCcw, Settings, Clock } from 'lucide-react';
