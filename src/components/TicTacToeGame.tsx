@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -229,7 +228,7 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
             </div>
           </div>
 
-          {/* Timer só aparece durante a vez do jogador */}
+          {/* Timer E SÓ "Vez de" do jogador */}
           {currentPlayer === 'X' && isGameActive && !winner && (
             <div className="space-y-2">
               <div className="flex items-center justify-center gap-2 text-white/80">
@@ -289,14 +288,16 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
               </div>
             ) : (
               <div className="text-xl font-semibold text-gray-200">
-                {/* Só mostra "Vez de:" quando é a vez do jogador */}
-                {currentPlayer === 'X' ? (
+                {/* Só mostra algo na vez do jogador, ou "Computador jogando..." quando não for vez do jogador */}
+                {currentPlayer === 'X' && isGameActive && !winner ? (
                   <>
                     Vez de: <span className="text-blue-400">{playerName}</span>
                   </>
-                ) : (
+                ) : null}
+                {/* Durante a vez do computador, mostrar apenas o texto abaixo */}
+                {currentPlayer === 'O' && isGameActive && !winner ? (
                   <span className="text-cyan-400">Computador jogando...</span>
-                )}
+                ) : null}
               </div>
             )}
           </div>
