@@ -27,9 +27,14 @@ const PlayerNameDialog = ({ onSubmit, onTutorial }: PlayerNameDialogProps) => {
           <div className="flex items-center justify-center">
             <Gamepad2 className="w-12 h-12 text-blue-400 mb-2" />
           </div>
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-            Velha Suprema
-          </CardTitle>
+          <div className="space-y-2">
+            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+              Velha Suprema
+            </CardTitle>
+            <p className="text-sm text-gray-400 font-medium">
+              Criado por <span className="text-gray-300">Mateus Morais</span>
+            </p>
+          </div>
           <p className="text-gray-300">Digite seu nome para começar!</p>
         </CardHeader>
         
