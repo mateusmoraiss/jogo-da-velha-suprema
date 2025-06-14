@@ -4,9 +4,10 @@ import TicTacToeGame from "@/components/TicTacToeGame";
 import PlayerNameDialog from "@/components/PlayerNameDialog";
 import DifficultySelector from "@/components/DifficultySelector";
 import Tutorial from "@/components/Tutorial";
+import Credits from "@/components/Credits";
 import { DifficultyLevel } from "@/types/gameTypes";
 
-type GameStep = 'name' | 'difficulty' | 'playing' | 'tutorial';
+type GameStep = 'name' | 'difficulty' | 'playing' | 'tutorial' | 'credits';
 
 const Index = () => {
   const [step, setStep] = useState<GameStep>('name');
@@ -29,14 +30,27 @@ const Index = () => {
     setStep('tutorial');
   };
 
+  const handleShowCredits = () => {
+    setPreviousStep(step);
+    setStep('credits');
+  };
+
   const handleCloseTutorial = () => {
+    setStep(previousStep);
+  }
+
+  const handleCloseCredits = () => {
     setStep(previousStep);
   }
 
   const renderStep = () => {
     switch (step) {
       case 'name':
-        return <PlayerNameDialog onSubmit={handleNameSubmit} onTutorial={handleShowTutorial} />;
+        return <PlayerNameDialog 
+          onSubmit={handleNameSubmit} 
+          onTutorial={handleShowTutorial} 
+          onCredits={handleShowCredits} 
+        />;
       case 'difficulty':
         return <DifficultySelector 
           onSelect={handleDifficultySelect} 
@@ -52,8 +66,14 @@ const Index = () => {
         />;
       case 'tutorial':
         return <Tutorial onClose={handleCloseTutorial} />;
+      case 'credits':
+        return <Credits onClose={handleCloseCredits} />;
       default:
-        return <PlayerNameDialog onSubmit={handleNameSubmit} onTutorial={handleShowTutorial} />;
+        return <PlayerNameDialog 
+          onSubmit={handleNameSubmit} 
+          onTutorial={handleShowTutorial} 
+          onCredits={handleShowCredits} 
+        />;
     }
   };
 

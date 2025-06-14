@@ -3,14 +3,15 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { User, Gamepad2, BookOpen } from 'lucide-react';
+import { User, Gamepad2, BookOpen, Award } from 'lucide-react';
 
 interface PlayerNameDialogProps {
   onSubmit: (name: string) => void;
   onTutorial: () => void;
+  onCredits: () => void;
 }
 
-const PlayerNameDialog = ({ onSubmit, onTutorial }: PlayerNameDialogProps) => {
+const PlayerNameDialog = ({ onSubmit, onTutorial, onCredits }: PlayerNameDialogProps) => {
   const [name, setName] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -68,6 +69,15 @@ const PlayerNameDialog = ({ onSubmit, onTutorial }: PlayerNameDialogProps) => {
           >
             <BookOpen className="w-4 h-4 mr-2" />
             Ver Tutorial dos Controles
+          </Button>
+
+          <Button 
+            onClick={onCredits}
+            variant="outline"
+            className="w-full bg-gray-800/30 border-gray-600 text-gray-300 hover:bg-gray-700/50 py-2"
+          >
+            <Award className="w-4 h-4 mr-2" />
+            Créditos
           </Button>
         </CardContent>
       </Card>
