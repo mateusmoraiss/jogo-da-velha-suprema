@@ -205,7 +205,7 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
           <div className="flex items-center justify-center gap-2">
             <Sparkles className="w-6 h-6 text-yellow-400" />
             <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-              Jogo da Velha
+              Velha Suprema
             </CardTitle>
             <Sparkles className="w-6 h-6 text-yellow-400" />
           </div>
@@ -228,7 +228,6 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
             </div>
           </div>
 
-          {/* Timer apenas na vez do jogador */}
           {currentPlayer === 'X' && isGameActive && !winner && (
             <div className="space-y-2">
               <div className="flex items-center justify-center gap-2 text-white/80">
@@ -287,12 +286,10 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
                 </div>
               </div>
             ) : (
-              <div className="text-xl font-semibold text-gray-200 h-8">
-                {currentPlayer === 'X' && isGameActive ? (
-                  <>Vez de: <span className="text-blue-400">{playerName}</span></>
-                ) : currentPlayer === 'O' && isGameActive ? (
-                  <span className="text-cyan-400">Computador jogando...</span>
-                ) : null}
+              <div className="text-xl font-semibold text-gray-200">
+                Vez de: <span className={currentPlayer === 'X' ? 'text-blue-400' : 'text-cyan-400'}>
+                  {currentPlayer === 'X' ? playerName : 'Computador'}
+                </span>
               </div>
             )}
           </div>
