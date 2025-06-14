@@ -29,23 +29,36 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     let newBoard = [...gameState.board];
     let currentPieceOrder = [...pieceOrder];
     const currentPlayer = gameState.currentPlayer;
+    const opponentPlayer = currentPlayer === 'X' ? 'O' : 'X';
 
-    // Se o jogador já tem 4 peças, remove as 2 mais antigas antes de colocar a nova.
-    const playerPiecesInOrder = currentPieceOrder.filter(p => p.player === currentPlayer);
-    if (playerPiecesInOrder.length >= 4) {
-      const piecesToRemove = playerPiecesInOrder.slice(0, 2);
-      piecesToRemove.forEach(p => {
-        newBoard[p.position] = null;
+    // 1. Adiciona a nova peça ao tabuleiro e ao histórico de ordem
+    newBoard[index] = currentPlayer;
+    currentPieceOrder.push({ position: index, player: currentPlayer });
+
+    // 2. Verifica se o jogador atual agora tem 4 ou mais peças
+    const playerPieces = currentPieceOrder.filter(p => p.player === currentPlayer);
+    if (playerPieces.length >= 4) {
+      // Identifica as 2 peças mais antigas do jogador atual
+      const playerPiecesToRemove = playerPieces.slice(0, 2);
+      
+      // Identifica as 2 peças mais antigas do oponente
+      const opponentPieces = currentPieceOrder.filter(p => p.player === opponentPlayer);
+      const opponentPiecesToRemove = opponentPieces.slice(0, 2);
+
+      // Combina todas as peças a serem removidas
+      const allPiecesToRemove = [...playerPiecesToRemove, ...opponentPiecesToRemove];
+      const positionsToRemove = allPiecesToRemove.map(p => p.position);
+
+      // 3. Remove as peças do tabuleiro
+      positionsToRemove.forEach(pos => {
+        newBoard[pos] = null;
       });
-      const positionsToRemove = piecesToRemove.map(p => p.position);
+      
+      // 4. Atualiza o histórico de ordem das peças
       currentPieceOrder = currentPieceOrder.filter(p => !positionsToRemove.includes(p.position));
     }
-
-    // Coloca a nova peça
-    newBoard[index] = currentPlayer;
-    const nextPieceOrder = [...currentPieceOrder, { position: index, player: currentPlayer }];
     
-    // Verifica o vencedor
+    // Verifica o vencedor com o novo estado do tabuleiro
     const winner = checkWinner(newBoard);
     
     // Atualiza o histórico de jogadas
@@ -73,7 +86,7 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     }
 
     // Atualiza os estados de uma vez
-    setPieceOrder(nextPieceOrder);
+    setPieceOrder(currentPieceOrder);
     setGameState(prevState => ({
       ...prevState,
       board: newBoard,
