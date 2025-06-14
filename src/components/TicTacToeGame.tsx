@@ -1,17 +1,18 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useInfiniteTicTacToe, difficultySettings } from '@/hooks/useInfiniteTicTacToe';
 import PlayerNameDialog from './PlayerNameDialog';
 import DifficultySelector, { DifficultyLevel } from './DifficultySelector';
-import { Sparkles, RotateCcw, Settings, Clock } from 'lucide-react';
+import Tutorial from './Tutorial';
+import { Sparkles, RotateCcw, Settings, Clock, User, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
 
 const TicTacToeGame = () => {
   const [playerName, setPlayerName] = useState<string>('');
   const [showNameDialog, setShowNameDialog] = useState(true);
   const [showDifficultySelector, setShowDifficultySelector] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyLevel>('medium');
   
   const {
@@ -24,10 +25,88 @@ const TicTacToeGame = () => {
     moveHistory,
     timeLeft,
     difficulty,
+    selectedPosition,
     makeMove,
     resetGame,
-    changeDifficulty
+    changeDifficulty,
+    updateSelectedPosition
   } = useInfiniteTicTacToe(playerName, selectedDifficulty);
+
+  // Keyboard controls
+  useEffect(() => {
+    const handleKeyPress = (event: KeyboardEvent) => {
+      if (currentPlayer !== 'X' || !isGameActive || winner || showNameDialog || showDifficultySelector || showTutorial) return;
+
+      const key = event.key;
+      let newPosition = selectedPosition;
+
+      // Position mapping based on key combinations
+      const pressedKeys = new Set();
+      if (event.key === 'ArrowUp') pressedKeys.add('up');
+      if (event.key === 'ArrowDown') pressedKeys.add('down');
+      if (event.key === 'ArrowLeft') pressedKeys.add('left');
+      if (event.key === 'ArrowRight') pressedKeys.add('right');
+
+      // Handle movement
+      if (key === 'ArrowUp' || key === 'ArrowDown' || key === 'ArrowLeft' || key === 'ArrowRight') {
+        event.preventDefault();
+        
+        if (key === 'ArrowUp' && key === 'ArrowLeft') newPosition = 0;
+        else if (key === 'ArrowUp' && key === 'ArrowRight') newPosition = 2;
+        else if (key === 'ArrowDown' && key === 'ArrowLeft') newPosition = 6;
+        else if (key === 'ArrowDown' && key === 'ArrowRight') newPosition = 8;
+        else if (key === 'ArrowUp') newPosition = 1;
+        else if (key === 'ArrowDown') newPosition = 7;
+        else if (key === 'ArrowLeft') newPosition = 3;
+        else if (key === 'ArrowRight') newPosition = 5;
+        
+        updateSelectedPosition(newPosition);
+      }
+      
+      // Handle space for confirming move
+      if (key === ' ') {
+        event.preventDefault();
+        makeMove(selectedPosition);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (currentPlayer !== 'X' || !isGameActive || winner || showNameDialog || showDifficultySelector || showTutorial) return;
+
+      const keys = {
+        up: event.key === 'ArrowUp',
+        down: event.key === 'ArrowDown',
+        left: event.key === 'ArrowLeft',
+        right: event.key === 'ArrowRight'
+      };
+
+      let newPosition = selectedPosition;
+
+      // Check combinations
+      if (keys.up && keys.left) newPosition = 0;
+      else if (keys.up && keys.right) newPosition = 2;
+      else if (keys.down && keys.left) newPosition = 6;
+      else if (keys.down && keys.right) newPosition = 8;
+      else if (keys.up && keys.down) newPosition = 4; // Center
+      else if (keys.up) newPosition = 1;
+      else if (keys.down) newPosition = 7;
+      else if (keys.left) newPosition = 3;
+      else if (keys.right) newPosition = 5;
+
+      if (newPosition !== selectedPosition) {
+        event.preventDefault();
+        updateSelectedPosition(newPosition);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keypress', handleKeyPress);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keypress', handleKeyPress);
+    };
+  }, [currentPlayer, isGameActive, winner, selectedPosition, makeMove, updateSelectedPosition, showNameDialog, showDifficultySelector, showTutorial]);
 
   const handleNameSubmit = (name: string) => {
     setPlayerName(name);
@@ -50,13 +129,17 @@ const TicTacToeGame = () => {
   const getCellClass = (index: number) => {
     const baseClass = "w-20 h-20 bg-gray-800/50 backdrop-blur-sm border-2 border-gray-600 rounded-xl flex items-center justify-center text-3xl font-bold cursor-pointer transition-all duration-300 hover:bg-gray-700/50 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20";
     
+    // Highlight selected position
+    const isSelected = index === selectedPosition && currentPlayer === 'X' && isGameActive && !winner;
+    const selectedClass = isSelected ? "ring-2 ring-yellow-400 ring-opacity-75 bg-yellow-500/10" : "";
+    
     if (board[index] === 'X') {
-      return `${baseClass} text-blue-400 bg-blue-500/20 border-blue-500/40 shadow-lg shadow-blue-500/20`;
+      return `${baseClass} ${selectedClass} text-blue-400 bg-blue-500/20 border-blue-500/40 shadow-lg shadow-blue-500/20`;
     } else if (board[index] === 'O') {
-      return `${baseClass} text-cyan-400 bg-cyan-500/20 border-cyan-500/40 shadow-lg shadow-cyan-500/20`;
+      return `${baseClass} ${selectedClass} text-cyan-400 bg-cyan-500/20 border-cyan-500/40 shadow-lg shadow-cyan-500/20`;
     }
     
-    return `${baseClass} hover:border-gray-500`;
+    return `${baseClass} ${selectedClass} hover:border-gray-500`;
   };
 
   const getDifficultyColor = () => {
@@ -78,12 +161,23 @@ const TicTacToeGame = () => {
     return 'bg-gradient-to-r from-red-500 to-pink-500';
   };
 
+  if (showTutorial) {
+    return <Tutorial onClose={() => setShowTutorial(false)} />;
+  }
+
   if (showNameDialog) {
-    return <PlayerNameDialog onSubmit={handleNameSubmit} />;
+    return <PlayerNameDialog 
+      onSubmit={handleNameSubmit} 
+      onTutorial={() => setShowTutorial(true)}
+    />;
   }
 
   if (showDifficultySelector) {
-    return <DifficultySelector onSelect={handleDifficultySelect} />;
+    return <DifficultySelector 
+      onSelect={handleDifficultySelect}
+      onBack={() => setShowNameDialog(true)}
+      onTutorial={() => setShowTutorial(true)}
+    />;
   }
 
   return (
@@ -134,6 +228,13 @@ const TicTacToeGame = () => {
             </div>
           )}
 
+          {/* Keyboard Controls Hint */}
+          {currentPlayer === 'X' && isGameActive && !winner && (
+            <div className="text-center text-xs text-gray-400">
+              Use as setas do teclado para navegar • ESPAÇO para confirmar
+            </div>
+          )}
+
           <div className="text-center">
             {winner ? (
               <div className="space-y-4">
@@ -155,6 +256,14 @@ const TicTacToeGame = () => {
                   >
                     <Settings className="w-4 h-4 mr-2" />
                     Mudar Nível
+                  </Button>
+                  <Button 
+                    onClick={() => setShowNameDialog(true)}
+                    variant="outline"
+                    className="bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50 px-6 py-2 rounded-lg transition-all duration-300"
+                  >
+                    <User className="w-4 h-4 mr-2" />
+                    Trocar Nome
                   </Button>
                 </div>
               </div>

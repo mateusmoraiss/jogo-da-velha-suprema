@@ -3,13 +3,14 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { User, Gamepad2 } from 'lucide-react';
+import { User, Gamepad2, BookOpen } from 'lucide-react';
 
 interface PlayerNameDialogProps {
   onSubmit: (name: string) => void;
+  onTutorial: () => void;
 }
 
-const PlayerNameDialog = ({ onSubmit }: PlayerNameDialogProps) => {
+const PlayerNameDialog = ({ onSubmit, onTutorial }: PlayerNameDialogProps) => {
   const [name, setName] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -32,7 +33,7 @@ const PlayerNameDialog = ({ onSubmit }: PlayerNameDialogProps) => {
           <p className="text-gray-300">Digite seu nome para começar!</p>
         </CardHeader>
         
-        <CardContent>
+        <CardContent className="space-y-4">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="relative">
               <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
@@ -54,6 +55,15 @@ const PlayerNameDialog = ({ onSubmit }: PlayerNameDialogProps) => {
               Começar Jogo
             </Button>
           </form>
+          
+          <Button 
+            onClick={onTutorial}
+            variant="outline"
+            className="w-full bg-gray-800/30 border-gray-600 text-gray-300 hover:bg-gray-700/50 py-2"
+          >
+            <BookOpen className="w-4 h-4 mr-2" />
+            Ver Tutorial dos Controles
+          </Button>
         </CardContent>
       </Card>
     </div>

@@ -9,6 +9,8 @@ export type DifficultyLevel = 'easy' | 'medium' | 'hard' | 'nightmare' | 'insane
 
 interface DifficultySelectorProps {
   onSelect: (difficulty: DifficultyLevel) => void;
+  onBack: () => void;
+  onTutorial: () => void;
 }
 
 const difficulties = [
@@ -43,7 +45,7 @@ const difficulties = [
     id: 'nightmare' as DifficultyLevel,
     name: 'Pesadelo',
     icon: Skull,
-    time: 3,
+    time: 3.5,
     description: 'IA muito esperta, pressão extrema',
     color: 'from-red-600 to-red-400',
     bgColor: 'bg-red-500/10 border-red-500/30'
@@ -52,7 +54,7 @@ const difficulties = [
     id: 'insane' as DifficultyLevel,
     name: 'Insano',
     icon: Zap,
-    time: 1.5,
+    time: 2,
     description: 'IA quase perfeita, reflexos ninjas',
     color: 'from-yellow-600 to-orange-600',
     bgColor: 'bg-yellow-500/10 border-yellow-500/30'
@@ -61,7 +63,7 @@ const difficulties = [
     id: 'godlike' as DifficultyLevel,
     name: 'Divino',
     icon: Sword,
-    time: 0.8,
+    time: 1.2,
     description: 'Para os deuses do jogo',
     color: 'from-violet-600 to-pink-600',
     bgColor: 'bg-violet-500/10 border-violet-500/30'
@@ -70,14 +72,14 @@ const difficulties = [
     id: 'armageddon' as DifficultyLevel,
     name: 'Armagedon',
     icon: Flame,
-    time: 0.35,
-    description: '💀 IMPOSSÍVEL - 0.35s de terror puro',
+    time: 0.6,
+    description: '💀 IMPOSSÍVEL - 0.6s de terror puro',
     color: 'from-red-700 via-orange-600 to-yellow-500',
     bgColor: 'bg-gradient-to-r from-red-500/20 to-orange-500/20 border-red-600/50 shadow-lg shadow-red-500/20'
   }
 ];
 
-const DifficultySelector = ({ onSelect }: DifficultySelectorProps) => {
+const DifficultySelector = ({ onSelect, onBack, onTutorial }: DifficultySelectorProps) => {
   return (
     <div className="w-full max-w-4xl mx-auto">
       <Card className="bg-gray-900/90 backdrop-blur-lg border-gray-700/50 shadow-2xl">
@@ -86,6 +88,23 @@ const DifficultySelector = ({ onSelect }: DifficultySelectorProps) => {
             Escolha a Dificuldade
           </CardTitle>
           <p className="text-gray-300">Teste suas habilidades contra diferentes níveis de IA</p>
+          
+          <div className="flex gap-2 justify-center">
+            <Button 
+              onClick={onTutorial}
+              variant="outline"
+              className="bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20"
+            >
+              📖 Tutorial
+            </Button>
+            <Button 
+              onClick={onBack}
+              variant="outline"
+              className="bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50"
+            >
+              ← Voltar
+            </Button>
+          </div>
         </CardHeader>
         
         <CardContent>

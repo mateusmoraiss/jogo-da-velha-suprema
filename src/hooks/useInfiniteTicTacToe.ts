@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { DifficultyLevel } from '@/components/DifficultySelector';
 
@@ -15,16 +16,17 @@ interface GameState {
   moveCount: number;
   timeLeft: number;
   difficulty: DifficultyLevel;
+  selectedPosition: number;
 }
 
 export const difficultySettings = {
   easy: { time: 10, aiLevel: 0.3 },
   medium: { time: 7, aiLevel: 0.5 },
   hard: { time: 5, aiLevel: 0.7 },
-  nightmare: { time: 3, aiLevel: 0.85 },
-  insane: { time: 1.5, aiLevel: 0.95 },
-  godlike: { time: 0.8, aiLevel: 0.98 },
-  armageddon: { time: 0.35, aiLevel: 1.0 }
+  nightmare: { time: 3.5, aiLevel: 0.85 },
+  insane: { time: 2, aiLevel: 0.95 },
+  godlike: { time: 1.2, aiLevel: 0.98 },
+  armageddon: { time: 0.6, aiLevel: 1.0 }
 };
 
 export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyLevel = 'medium') => {
@@ -38,7 +40,8 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     moveHistory: [],
     moveCount: 0,
     timeLeft: difficultySettings[difficulty].time,
-    difficulty
+    difficulty,
+    selectedPosition: 4 // Start at center
   });
 
   const checkWinner = useCallback((board: Board): Player => {
@@ -170,6 +173,13 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     });
   }, [checkWinner, removeOldestMove, playerName]);
 
+  const updateSelectedPosition = useCallback((newPosition: number) => {
+    setGameState(prev => ({
+      ...prev,
+      selectedPosition: newPosition
+    }));
+  }, []);
+
   // Timer effect
   useEffect(() => {
     if (gameState.currentPlayer === 'X' && gameState.isGameActive && !gameState.winner && gameState.timeLeft > 0) {
@@ -184,16 +194,17 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     }
   }, [gameState.timeLeft, gameState.currentPlayer, gameState.isGameActive, gameState.winner]);
 
-  // Auto move when time runs out
+  // When time runs out, player loses the turn (no auto-move)
   useEffect(() => {
     if (gameState.currentPlayer === 'X' && gameState.timeLeft <= 0 && gameState.isGameActive) {
-      const availableSpots = gameState.board.map((cell, index) => cell === null ? index : null).filter(val => val !== null);
-      if (availableSpots.length > 0) {
-        const randomMove = availableSpots[Math.floor(Math.random() * availableSpots.length)] as number;
-        makeMove(randomMove);
-      }
+      // Player loses turn, computer gets to play
+      setGameState(prev => ({
+        ...prev,
+        currentPlayer: 'O',
+        timeLeft: difficultySettings[prev.difficulty].time
+      }));
     }
-  }, [gameState.timeLeft, gameState.currentPlayer, gameState.isGameActive, gameState.board, makeMove]);
+  }, [gameState.timeLeft, gameState.currentPlayer, gameState.isGameActive]);
 
   // Computer move effect
   useEffect(() => {
@@ -218,7 +229,8 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       isGameActive: true,
       moveHistory: [],
       moveCount: 0,
-      timeLeft: difficultySettings[prevState.difficulty].time
+      timeLeft: difficultySettings[prevState.difficulty].time,
+      selectedPosition: 4
     }));
   }, []);
 
@@ -232,7 +244,8 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       winner: null,
       isGameActive: true,
       moveHistory: [],
-      moveCount: 0
+      moveCount: 0,
+      selectedPosition: 4
     }));
   }, []);
 
@@ -246,8 +259,10 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     moveHistory: gameState.moveHistory,
     timeLeft: gameState.timeLeft,
     difficulty: gameState.difficulty,
+    selectedPosition: gameState.selectedPosition,
     makeMove,
     resetGame,
-    changeDifficulty
+    changeDifficulty,
+    updateSelectedPosition
   };
 };
