@@ -116,6 +116,10 @@ const Tutorial = ({ onClose }: TutorialProps) => {
                   <Github className="w-5 h-5" />
                   <span>github.com/mateusmoraiss</span>
                 </a>
+                <div className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 border border-purple-600/50 p-3 rounded-lg space-y-2">
+                  <p><strong className="text-purple-400">🚀 Projeto desenvolvido com Lovable</strong></p>
+                  <p className="text-sm">Criado durante a semana grátis de disputa entre Anthropic, OpenAI e Google (14/06/2025). IA foi usada para toda a implementação visual e de código, exceto a <strong className="text-white">lógica do jogo e sistema de balanceamento</strong>, que foram desenvolvidos 100% por mim.</p>
+                </div>
                 <p><strong className="text-white">Tecnologias:</strong> React, TypeScript, Vite, Tailwind CSS, shadcn/ui, Web Audio API.</p>
                 <p><strong className="text-white">Recursos:</strong> Efeitos sonoros procedurais, controles híbridos, sistema de balanceamento dinâmico.</p>
               </div>
