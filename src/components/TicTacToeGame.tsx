@@ -31,44 +31,75 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
     updateSelectedPosition
   } = useInfiniteTicTacToe(playerName, difficulty);
 
-  // Modern "pop" sound for selection
-  const playSelectSound = useCallback(() => {
-    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = 'square';
-    osc.frequency.setValueAtTime(560, ctx.currentTime);
-    osc.frequency.linearRampToValueAtTime(400, ctx.currentTime + 0.10);
-    gain.gain.setValueAtTime(0, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.18, ctx.currentTime + 0.015);
-    gain.gain.exponentialRampToValueAtTime(0.003, ctx.currentTime + 0.09);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.12);
-    osc.onended = () => ctx.close();
-  }, []);
-
-  // Modern "digital sweep" sound for move
+  // Modern pleasant sound effect for piece placement
   const playMoveSound = useCallback(() => {
     const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(750, ctx.currentTime);
-    osc.frequency.linearRampToValueAtTime(180, ctx.currentTime + 0.24);
-    gain.gain.setValueAtTime(0, ctx.currentTime);
-    gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 0.012);
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.20);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.24);
-    osc.onended = () => ctx.close();
+    
+    // Create multiple oscillators for a richer sound
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const osc3 = ctx.createOscillator();
+    
+    const gain1 = ctx.createGain();
+    const gain2 = ctx.createGain();
+    const gain3 = ctx.createGain();
+    const masterGain = ctx.createGain();
+    
+    // Main tone - warm sine wave
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+    osc1.frequency.exponentialRampToValueAtTime(261.63, ctx.currentTime + 0.3); // C4
+    
+    // Harmonic - adds warmth
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(659.25, ctx.currentTime); // E5
+    osc2.frequency.exponentialRampToValueAtTime(329.63, ctx.currentTime + 0.3); // E4
+    
+    // Sub harmonic - adds depth
+    osc3.type = 'triangle';
+    osc3.frequency.setValueAtTime(392.00, ctx.currentTime); // G4
+    osc3.frequency.exponentialRampToValueAtTime(196.00, ctx.currentTime + 0.3); // G3
+    
+    // Gain envelopes for smooth attack and decay
+    gain1.gain.setValueAtTime(0, ctx.currentTime);
+    gain1.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.02);
+    gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    
+    gain2.gain.setValueAtTime(0, ctx.currentTime);
+    gain2.gain.linearRampToValueAtTime(0.05, ctx.currentTime + 0.02);
+    gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    
+    gain3.gain.setValueAtTime(0, ctx.currentTime);
+    gain3.gain.linearRampToValueAtTime(0.03, ctx.currentTime + 0.02);
+    gain3.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+    
+    masterGain.gain.setValueAtTime(0.8, ctx.currentTime);
+    
+    // Connect the audio graph
+    osc1.connect(gain1);
+    osc2.connect(gain2);
+    osc3.connect(gain3);
+    
+    gain1.connect(masterGain);
+    gain2.connect(masterGain);
+    gain3.connect(masterGain);
+    
+    masterGain.connect(ctx.destination);
+    
+    // Start and stop
+    const startTime = ctx.currentTime;
+    const stopTime = startTime + 0.5;
+    
+    osc1.start(startTime);
+    osc2.start(startTime);
+    osc3.start(startTime);
+    
+    osc1.stop(stopTime);
+    osc2.stop(stopTime);
+    osc3.stop(stopTime);
+    
+    // Clean up
+    setTimeout(() => ctx.close(), 600);
   }, []);
 
   // Enhanced keyboard controls with WASD support
@@ -90,7 +121,6 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
       
       if (newPosition !== selectedPosition) {
         updateSelectedPosition(newPosition);
-        playSelectSound();
       }
       
       if (key === ' ' && currentPlayer === 'X' && isGameActive && !winner) {
@@ -101,14 +131,13 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
     };
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [selectedPosition, currentPlayer, isGameActive, winner, makeMove, updateSelectedPosition, playSelectSound, playMoveSound]);
+  }, [selectedPosition, currentPlayer, isGameActive, winner, makeMove, updateSelectedPosition, playMoveSound]);
 
   // Mouse apenas seleciona, não clica para jogar
   const handleCellClick = (index: number) => {
     // Mouse click apenas seleciona a célula, não faz a jogada
     if (currentPlayer === 'X' && isGameActive && !winner) {
       updateSelectedPosition(index);
-      playSelectSound();
     }
   };
 
