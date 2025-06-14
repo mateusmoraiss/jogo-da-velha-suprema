@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { GameState, DifficultyLevel, Player } from '@/types/gameTypes';
 import { difficultySettings } from '@/constants/difficultySettings';
@@ -136,25 +135,13 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     }
   }, [gameState.timeLeft, gameState.currentPlayer, gameState.isGameActive, gameState.winner, playerName]);
 
-  // Enhanced computer move effect with better timing and move selection
+  // Computer move effect - plays instantly
   useEffect(() => {
     if (gameState.currentPlayer === 'O' && gameState.isGameActive && !gameState.winner) {
-      // Variable delay based on difficulty - harder difficulties "think" longer
-      const thinkingTime = gameState.difficulty === 'easy' ? 500 : 
-                          gameState.difficulty === 'medium' ? 750 :
-                          gameState.difficulty === 'hard' ? 1000 :
-                          gameState.difficulty === 'nightmare' ? 1250 :
-                          gameState.difficulty === 'insane' ? 1500 :
-                          gameState.difficulty === 'godlike' ? 1750 : 2000;
-
-      const timer = setTimeout(() => {
-        const computerMoveIndex = getComputerMove(gameState.board, gameState.difficulty);
-        if (computerMoveIndex !== undefined && computerMoveIndex >= 0 && computerMoveIndex < 9) {
-          makeMove(computerMoveIndex);
-        }
-      }, thinkingTime);
-
-      return () => clearTimeout(timer);
+      const computerMoveIndex = getComputerMove(gameState.board, gameState.difficulty);
+      if (computerMoveIndex !== undefined && computerMoveIndex >= 0 && computerMoveIndex < 9) {
+        makeMove(computerMoveIndex);
+      }
     }
   }, [gameState.currentPlayer, gameState.isGameActive, gameState.winner, gameState.board, gameState.difficulty, makeMove]);
 
