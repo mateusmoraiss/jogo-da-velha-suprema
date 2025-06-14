@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -57,6 +56,12 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
   const handleCellClick = (index: number) => {
     if (currentPlayer === 'X' && isGameActive && !winner) {
       makeMove(index);
+    }
+  };
+
+  const handleCellHover = (index: number) => {
+    if (currentPlayer === 'X' && isGameActive && !winner) {
+      updateSelectedPosition(index);
     }
   };
 
@@ -182,6 +187,7 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
                 key={index}
                 className={getCellClass(index)}
                 onClick={() => handleCellClick(index)}
+                onMouseEnter={() => handleCellHover(index)}
               >
                 {cell && (
                   <span className="animate-scale-in">
