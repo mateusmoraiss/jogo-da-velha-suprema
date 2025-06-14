@@ -104,37 +104,23 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
 
   const removeOldestMoves = useCallback((board: Board, player: 'X' | 'O'): Board => {
     const newBoard = [...board];
-    let removedCount = 0;
+    const playerPositions: number[] = [];
     
-    // Remove 2 oldest pieces of the current player
-    for (let i = 0; i < 9 && removedCount < 2; i++) {
+    // Find all positions of the current player
+    for (let i = 0; i < 9; i++) {
       if (newBoard[i] === player) {
-        const testBoard = [...newBoard];
-        testBoard[i] = null;
-        
-        // Check if removing this piece would allow opponent to win
-        const opponent = player === 'X' ? 'O' : 'X';
-        const wouldLose = canWinNextMove(testBoard, opponent) !== -1;
-        
-        if (!wouldLose) {
-          newBoard[i] = null;
-          removedCount++;
-        }
+        playerPositions.push(i);
       }
     }
     
-    // If we couldn't remove 2 pieces safely, remove at least 1
-    if (removedCount === 0) {
-      for (let i = 0; i < 9; i++) {
-        if (newBoard[i] === player) {
-          newBoard[i] = null;
-          break;
-        }
-      }
-    }
+    // Remove the first 2 pieces (oldest) of the current player
+    const positionsToRemove = playerPositions.slice(0, 2);
+    positionsToRemove.forEach(pos => {
+      newBoard[pos] = null;
+    });
     
     return newBoard;
-  }, [canWinNextMove]);
+  }, []);
 
   const makeMove = useCallback((index: number) => {
     setGameState(prevState => {
@@ -145,9 +131,9 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       let newBoard = [...prevState.board];
       let newMoveCount = prevState.moveCount + 1;
       
-      // Check if board is full (all 9 positions filled)
+      // Check if board has 6 or more pieces (time to start removing)
       const filledCells = newBoard.filter(cell => cell !== null).length;
-      if (filledCells >= 9) {
+      if (filledCells >= 6) {
         // Remove 2 oldest moves of current player before placing new one
         newBoard = removeOldestMoves(newBoard, prevState.currentPlayer);
       }
