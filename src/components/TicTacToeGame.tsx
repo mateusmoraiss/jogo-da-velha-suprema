@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -228,22 +229,25 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
             </div>
           </div>
 
-          {currentPlayer === 'X' && isGameActive && !winner && (
-            <div className="space-y-2">
-              <div className="flex items-center justify-center gap-2 text-white/80">
-                <Clock className="w-4 h-4" />
-                <span className="text-sm font-medium">
-                  Tempo: {timeLeft.toFixed(1)}s
-                </span>
+          {/* Container com altura fixa para evitar movimento do layout */}
+          <div className="h-16 flex flex-col justify-center">
+            {currentPlayer === 'X' && isGameActive && !winner ? (
+              <div className="space-y-2">
+                <div className="flex items-center justify-center gap-2 text-white/80">
+                  <Clock className="w-4 h-4" />
+                  <span className="text-sm font-medium">
+                    Tempo: {timeLeft.toFixed(1)}s
+                  </span>
+                </div>
+                <div className="w-full bg-gray-700 rounded-full h-2">
+                  <div 
+                    className={`h-2 rounded-full transition-all duration-100 ${getTimeBarColor()}`}
+                    style={{ width: `${(timeLeft / difficultySettings[difficulty].time) * 100}%` }}
+                  />
+                </div>
               </div>
-              <div className="w-full bg-gray-700 rounded-full h-2">
-                <div 
-                  className={`h-2 rounded-full transition-all duration-100 ${getTimeBarColor()}`}
-                  style={{ width: `${(timeLeft / difficultySettings[difficulty].time) * 100}%` }}
-                />
-              </div>
-            </div>
-          )}
+            ) : null}
+          </div>
 
           <div className="text-center text-xs text-gray-400">
             {winner ? (
