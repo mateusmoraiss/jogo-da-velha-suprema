@@ -16,7 +16,6 @@ const Credits = ({ onClose }: CreditsProps) => {
           <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
             🏆 Créditos - Velha Suprema
           </CardTitle>
-          <p className="text-gray-300">Conheça quem está por trás deste jogo!</p>
         </CardHeader>
         
         <CardContent className="space-y-8">
@@ -31,6 +30,10 @@ const Credits = ({ onClose }: CreditsProps) => {
               <a href="https://github.com/mateusmoraiss" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-white transition-colors">
                 <Github className="w-5 h-5" />
                 <span>github.com/mateusmoraiss</span>
+              </a>
+              <a href="https://github.com/mateusmoraiss/jogo-da-velha-suprema" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-white transition-colors">
+                <Github className="w-5 h-5" />
+                <span>Repositório: github.com/mateusmoraiss/jogo-da-velha-suprema</span>
               </a>
             </div>
           </div>
