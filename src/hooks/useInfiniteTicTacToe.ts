@@ -1,7 +1,8 @@
+
 import { useState, useEffect, useCallback } from 'react';
-import { GameState, DifficultyLevel } from '@/types/gameTypes';
+import { GameState, DifficultyLevel, Player } from '@/types/gameTypes';
 import { difficultySettings } from '@/constants/difficultySettings';
-import { checkWinner, removeOldestMoves } from '@/utils/gameLogic';
+import { checkWinner } from '@/utils/gameLogic';
 import { getComputerMove } from '@/utils/aiLogic';
 
 export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyLevel = 'medium') => {
@@ -16,75 +17,76 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     moveCount: 0,
     timeLeft: difficultySettings[difficulty].time,
     difficulty,
-    selectedPosition: 4 // Start at center
+    selectedPosition: 4
   });
+  const [pieceOrder, setPieceOrder] = useState<{ position: number; player: Player }[]>([]);
 
   const makeMove = useCallback((index: number) => {
-    setGameState(prevState => {
-      if (!prevState.isGameActive || prevState.board[index] || prevState.winner) {
-        return prevState;
-      }
+    if (!gameState.isGameActive || gameState.board[index] || gameState.winner) {
+      return;
+    }
 
-      let newBoard = [...prevState.board];
-      let newMoveCount = prevState.moveCount + 1;
-      
-      // Check if we need to remove old pieces (when board gets crowded)
-      const filledCells = newBoard.filter(cell => cell !== null).length;
-      
-      // Start removing pieces when board has 6+ pieces, but be more strategic about it
-      if (filledCells >= 6) {
-        // Only remove if the current player has 3+ pieces
-        const currentPlayerPieces = newBoard.filter(cell => cell === prevState.currentPlayer).length;
-        if (currentPlayerPieces >= 3) {
-          newBoard = removeOldestMoves(newBoard, prevState.currentPlayer);
-        }
-      }
+    let newBoard = [...gameState.board];
+    let currentPieceOrder = [...pieceOrder];
+    const currentPlayer = gameState.currentPlayer;
 
-      // Place new piece
-      newBoard[index] = prevState.currentPlayer;
-      
-      // Check for winner after the move
-      const winner = checkWinner(newBoard);
-      
-      // Update move history with more detailed information
-      const newHistory = [...prevState.moveHistory];
-      const playerDisplayName = prevState.currentPlayer === 'X' ? playerName : 'Computador';
-      const moveDescription = `${playerDisplayName} jogou na posição ${index + 1}`;
-      
-      if (winner) {
-        newHistory.push(`${moveDescription} - VITÓRIA!`);
-      } else {
-        newHistory.push(moveDescription);
-      }
+    // Se o jogador já tem 4 peças, remove as 2 mais antigas antes de colocar a nova.
+    const playerPiecesInOrder = currentPieceOrder.filter(p => p.player === currentPlayer);
+    if (playerPiecesInOrder.length >= 4) {
+      const piecesToRemove = playerPiecesInOrder.slice(0, 2);
+      piecesToRemove.forEach(p => {
+        newBoard[p.position] = null;
+      });
+      const positionsToRemove = piecesToRemove.map(p => p.position);
+      currentPieceOrder = currentPieceOrder.filter(p => !positionsToRemove.includes(p.position));
+    }
 
-      // Keep only last 10 moves in history
-      if (newHistory.length > 10) {
-        newHistory.splice(0, newHistory.length - 10);
-      }
+    // Coloca a nova peça
+    newBoard[index] = currentPlayer;
+    const nextPieceOrder = [...currentPieceOrder, { position: index, player: currentPlayer }];
+    
+    // Verifica o vencedor
+    const winner = checkWinner(newBoard);
+    
+    // Atualiza o histórico de jogadas
+    const newHistory = [...gameState.moveHistory];
+    const playerDisplayName = currentPlayer === 'X' ? playerName : 'Computador';
+    const moveDescription = `${playerDisplayName} jogou na posição ${index + 1}`;
+    
+    if (winner) {
+      newHistory.push(`${moveDescription} - VITÓRIA!`);
+    } else {
+      newHistory.push(moveDescription);
+    }
 
-      let newPlayerScore = prevState.playerScore;
-      let newComputerScore = prevState.computerScore;
-      
-      if (winner === 'X') {
-        newPlayerScore++;
-      } else if (winner === 'O') {
-        newComputerScore++;
-      }
+    if (newHistory.length > 10) {
+      newHistory.splice(0, newHistory.length - 10);
+    }
 
-      return {
-        ...prevState,
-        board: newBoard,
-        currentPlayer: prevState.currentPlayer === 'X' ? 'O' : 'X',
-        winner,
-        isGameActive: !winner,
-        playerScore: newPlayerScore,
-        computerScore: newComputerScore,
-        moveHistory: newHistory,
-        moveCount: newMoveCount,
-        timeLeft: difficultySettings[prevState.difficulty].time
-      };
-    });
-  }, [playerName]);
+    // Atualiza o placar
+    let newPlayerScore = gameState.playerScore;
+    let newComputerScore = gameState.computerScore;
+    if (winner === 'X') {
+      newPlayerScore++;
+    } else if (winner === 'O') {
+      newComputerScore++;
+    }
+
+    // Atualiza os estados de uma vez
+    setPieceOrder(nextPieceOrder);
+    setGameState(prevState => ({
+      ...prevState,
+      board: newBoard,
+      currentPlayer: currentPlayer === 'X' ? 'O' : 'X',
+      winner,
+      isGameActive: !winner,
+      playerScore: newPlayerScore,
+      computerScore: newComputerScore,
+      moveHistory: newHistory,
+      moveCount: prevState.moveCount + 1,
+      timeLeft: difficultySettings[prevState.difficulty].time,
+    }));
+  }, [gameState, pieceOrder, playerName]);
 
   const updateSelectedPosition = useCallback((newPosition: number) => {
     setGameState(prev => ({
@@ -155,6 +157,7 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       timeLeft: difficultySettings[prevState.difficulty].time,
       selectedPosition: 4
     }));
+    setPieceOrder([]);
   }, []);
 
   const changeDifficulty = useCallback((newDifficulty: DifficultyLevel) => {
@@ -170,6 +173,7 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       moveCount: 0,
       selectedPosition: 4
     }));
+    setPieceOrder([]);
   }, []);
 
   return {

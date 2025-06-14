@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -45,9 +44,8 @@ const Tutorial = ({ onClose }: TutorialProps) => {
               </div>
               <div className="space-y-3 text-gray-300">
                  <p>Controles: Use as <strong className="text-white">Setas do Teclado</strong> para mover e <strong className="text-white">ESPAÇO</strong> para confirmar a jogada.</p>
-                 <p>O jogo é <strong className="text-white">infinito</strong>. Após 6 peças no tabuleiro, a mais antiga do jogador da vez é removida a cada nova jogada.</p>
+                 <p>O jogo é <strong className="text-white">infinito</strong>. Se um jogador tiver 4 peças, as 2 mais antigas são removidas ao fazer uma nova jogada.</p>
                  <p>O tempo é seu inimigo. Se o cronômetro zerar, você perde a vez.</p>
-                 <p>No modo <strong className="text-white">Supremo</strong>, você joga em dois tabuleiros ao mesmo tempo. O desafio é dobrado!</p>
               </div>
             </div>
           </div>
@@ -83,4 +81,3 @@ const Tutorial = ({ onClose }: TutorialProps) => {
 };
 
 export default Tutorial;
-
