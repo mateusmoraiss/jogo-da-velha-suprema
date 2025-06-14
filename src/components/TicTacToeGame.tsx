@@ -31,33 +31,85 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
     updateSelectedPosition
   } = useInfiniteTicTacToe(playerName, difficulty);
 
-  // Keyboard controls
+  // Sound effects using Web Audio API
+  const playSelectSound = useCallback(() => {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+    
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.1, audioContext.currentTime + 0.01);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+    
+    oscillator.type = 'sine';
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.1);
+  }, []);
+
+  const playMoveSound = useCallback(() => {
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+    
+    oscillator.frequency.setValueAtTime(600, audioContext.currentTime);
+    oscillator.frequency.linearRampToValueAtTime(800, audioContext.currentTime + 0.15);
+    
+    gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+    gainNode.gain.linearRampToValueAtTime(0.15, audioContext.currentTime + 0.02);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
+    
+    oscillator.type = 'triangle';
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.15);
+  }, []);
+
+  // Enhanced keyboard controls with WASD support
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
-      const key = event.key;
+      const key = event.key.toLowerCase();
       let newPosition = selectedPosition;
 
-      if (key === 'ArrowUp' && selectedPosition > 2) newPosition = selectedPosition - 3;
-      else if (key === 'ArrowDown' && selectedPosition < 6) newPosition = selectedPosition + 3;
-      else if (key === 'ArrowLeft' && selectedPosition % 3 !== 0) newPosition = selectedPosition - 1;
-      else if (key === 'ArrowRight' && selectedPosition % 3 !== 2) newPosition = selectedPosition + 1;
+      // Arrow keys and WASD support
+      if ((key === 'arrowup' || key === 'w') && selectedPosition > 2) {
+        newPosition = selectedPosition - 3;
+      } else if ((key === 'arrowdown' || key === 's') && selectedPosition < 6) {
+        newPosition = selectedPosition + 3;
+      } else if ((key === 'arrowleft' || key === 'a') && selectedPosition % 3 !== 0) {
+        newPosition = selectedPosition - 1;
+      } else if ((key === 'arrowright' || key === 'd') && selectedPosition % 3 !== 2) {
+        newPosition = selectedPosition + 1;
+      }
       
-      if (newPosition !== selectedPosition) updateSelectedPosition(newPosition);
+      if (newPosition !== selectedPosition) {
+        updateSelectedPosition(newPosition);
+        playSelectSound();
+      }
       
       if (key === ' ' && currentPlayer === 'X' && isGameActive && !winner) {
         event.preventDefault();
         makeMove(selectedPosition);
+        playMoveSound();
       }
     };
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [selectedPosition, currentPlayer, isGameActive, winner, makeMove, updateSelectedPosition]);
+  }, [selectedPosition, currentPlayer, isGameActive, winner, makeMove, updateSelectedPosition, playSelectSound, playMoveSound]);
 
   // Mouse apenas seleciona, não clica para jogar
   const handleCellClick = (index: number) => {
     // Mouse click apenas seleciona a célula, não faz a jogada
     if (currentPlayer === 'X' && isGameActive && !winner) {
       updateSelectedPosition(index);
+      playSelectSound();
     }
   };
 
@@ -137,7 +189,7 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
           )}
 
           <div className="text-center text-xs text-gray-400">
-            Use as setas para navegar • Mouse para selecionar • ESPAÇO para confirmar
+            Use WASD ou setas para navegar • Mouse para selecionar • ESPAÇO para confirmar
           </div>
 
           <div className="text-center">

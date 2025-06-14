@@ -2,7 +2,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Zap, Brain, Gamepad2, Award, Github, Mouse, Keyboard } from 'lucide-react';
+import { Zap, Brain, Gamepad2, Award, Github, Mouse, Keyboard, RotateCw } from 'lucide-react';
 
 interface TutorialProps {
   onClose: () => void;
@@ -44,9 +44,29 @@ const Tutorial = ({ onClose }: TutorialProps) => {
                 <span>Como Jogar</span>
               </div>
               <div className="space-y-3 text-gray-300">
-                 <p>O jogo é <strong className="text-white">infinito</strong>. Quando o tabuleiro encher, as peças mais antigas de cada jogador são removidas (alternando entre 3 e 4 peças).</p>
-                 <p>O tempo é seu inimigo. Se o cronômetro zerar, você perde a vez.</p>
-                 <p>Apenas <strong className="text-white">ESPAÇO</strong> confirma jogadas - mouse e setas apenas selecionam!</p>
+                 <p>O jogo é <strong className="text-white">infinito</strong>. Quando o tabuleiro encher, as peças mais antigas de cada jogador são removidas automaticamente.</p>
+                 <p>O tempo é seu inimigo. Se o cronômetro zerar, você perde a vez automaticamente.</p>
+                 <p>Apenas <strong className="text-white">ESPAÇO</strong> confirma jogadas - mouse e teclas apenas selecionam!</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Sistema de Balanceamento */}
+          <div className="border-t border-gray-700 pt-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 text-2xl font-semibold text-green-400">
+                <RotateCw className="w-8 h-8" />
+                <span>Sistema de Balanceamento Inteligente</span>
+              </div>
+              <div className="space-y-3 text-gray-300">
+                <p>
+                  O jogo usa um sistema de balanceamento dinâmico para manter a competição equilibrada:
+                </p>
+                <div className="bg-gray-800/50 p-4 rounded-lg space-y-2">
+                  <p><strong className="text-white">🔄 Ciclo Alternado:</strong> O jogo alterna entre remover <strong className="text-yellow-400">3 peças</strong> e <strong className="text-cyan-400">4 peças</strong> de cada jogador quando o tabuleiro fica cheio.</p>
+                  <p><strong className="text-white">⚖️ Equilíbrio Estratégico:</strong> Isso garante que nenhum jogador tenha vantagem permanente, criando oportunidades para ambos os lados.</p>
+                  <p><strong className="text-white">🎯 Estratégia Adaptativa:</strong> Você precisa ajustar sua estratégia conforme o ciclo muda, mantendo o jogo sempre desafiador!</p>
+                </div>
               </div>
             </div>
           </div>
@@ -59,9 +79,12 @@ const Tutorial = ({ onClose }: TutorialProps) => {
                 <span>Controles do Teclado</span>
               </div>
               <div className="space-y-2 text-gray-300 text-sm">
-                <p><strong className="text-white">Setas:</strong> Navegam entre os quadrados</p>
+                <p><strong className="text-white">Setas ↑↓←→:</strong> Navegam entre os quadrados</p>
+                <p><strong className="text-white">WASD:</strong> Alternativa às setas (W=cima, A=esquerda, S=baixo, D=direita)</p>
                 <p><strong className="text-white">ESPAÇO:</strong> Confirma a jogada na posição selecionada</p>
-                <p className="text-yellow-400">⚠️ Apenas ESPAÇO faz jogadas!</p>
+                <div className="bg-yellow-900/30 border border-yellow-600/50 p-2 rounded">
+                  <p className="text-yellow-400">⚠️ Apenas ESPAÇO faz jogadas! Use WASD/setas para navegar rapidamente!</p>
+                </div>
               </div>
             </div>
 
@@ -71,9 +94,12 @@ const Tutorial = ({ onClose }: TutorialProps) => {
                 <span>Controles do Mouse</span>
               </div>
               <div className="space-y-2 text-gray-300 text-sm">
-                <p><strong className="text-white">Hover:</strong> Seleciona automaticamente o quadrado</p>
+                <p><strong className="text-white">Hover (passar por cima):</strong> Seleciona automaticamente o quadrado</p>
                 <p><strong className="text-white">Click:</strong> Apenas seleciona (não joga!)</p>
                 <p>Use <strong className="text-white">ESPAÇO</strong> para confirmar após selecionar</p>
+                <div className="bg-blue-900/30 border border-blue-600/50 p-2 rounded">
+                  <p className="text-blue-400">💡 Dica: Combine mouse para seleção rápida + ESPAÇO para confirmação!</p>
+                </div>
               </div>
             </div>
           </div>
@@ -90,7 +116,8 @@ const Tutorial = ({ onClose }: TutorialProps) => {
                   <Github className="w-5 h-5" />
                   <span>github.com/mateusmoraiss</span>
                 </a>
-                <p><strong className="text-white">Tecnologias:</strong> React, TypeScript, Vite, Tailwind CSS, shadcn/ui.</p>
+                <p><strong className="text-white">Tecnologias:</strong> React, TypeScript, Vite, Tailwind CSS, shadcn/ui, Web Audio API.</p>
+                <p><strong className="text-white">Recursos:</strong> Efeitos sonoros procedurais, controles híbridos, sistema de balanceamento dinâmico.</p>
               </div>
           </div>
 
