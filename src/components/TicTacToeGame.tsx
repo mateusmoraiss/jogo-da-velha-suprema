@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -291,11 +290,7 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
               </div>
             ) : (
               <div className="text-xl font-semibold text-gray-200">
-                {currentPlayer === 'O' ? (
-                  <span className="text-cyan-400">Computador jogando...</span>
-                ) : (
-                  <>Sua vez, <span className="text-blue-400">{playerName}</span>!</>
-                )}
+                Sua vez, <span className="text-blue-400">{playerName}</span>!
               </div>
             )}
           </div>
