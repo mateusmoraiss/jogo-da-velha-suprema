@@ -3,9 +3,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useInfiniteTicTacToe, difficultySettings } from '@/hooks/useInfiniteTicTacToe';
+import { useInfiniteTicTacToe } from '@/hooks/useInfiniteTicTacToe';
+import { difficultySettings } from '@/constants/difficultySettings';
+import { DifficultyLevel } from '@/types/gameTypes';
 import PlayerNameDialog from './PlayerNameDialog';
-import DifficultySelector, { DifficultyLevel } from './DifficultySelector';
+import DifficultySelector from './DifficultySelector';
 import Tutorial from './Tutorial';
 import { Sparkles, RotateCcw, Settings, Clock, User } from 'lucide-react';
 
