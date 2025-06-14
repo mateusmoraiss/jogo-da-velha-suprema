@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Zap, Brain, Skull, Flame, Target, Shield, Sword } from 'lucide-react';
 
-export type DifficultyLevel = 'easy' | 'medium' | 'hard' | 'nightmare' | 'armageddon' | 'insane' | 'godlike';
+export type DifficultyLevel = 'easy' | 'medium' | 'hard' | 'nightmare' | 'insane' | 'godlike' | 'armageddon';
 
 interface DifficultySelectorProps {
   onSelect: (difficulty: DifficultyLevel) => void;
@@ -43,26 +43,17 @@ const difficulties = [
     id: 'nightmare' as DifficultyLevel,
     name: 'Pesadelo',
     icon: Skull,
-    time: 4,
-    description: 'IA muito esperta, pressão',
+    time: 3,
+    description: 'IA muito esperta, pressão extrema',
     color: 'from-red-600 to-red-400',
     bgColor: 'bg-red-500/10 border-red-500/30'
-  },
-  {
-    id: 'armageddon' as DifficultyLevel,
-    name: 'Armagedon',
-    icon: Flame,
-    time: 2,
-    description: 'IA brutal, tempo extremo',
-    color: 'from-orange-600 to-red-600',
-    bgColor: 'bg-orange-500/10 border-orange-500/30'
   },
   {
     id: 'insane' as DifficultyLevel,
     name: 'Insano',
     icon: Zap,
     time: 1.5,
-    description: 'IA perfeita, reflexos ninjas',
+    description: 'IA quase perfeita, reflexos ninjas',
     color: 'from-yellow-600 to-orange-600',
     bgColor: 'bg-yellow-500/10 border-yellow-500/30'
   },
@@ -70,10 +61,19 @@ const difficulties = [
     id: 'godlike' as DifficultyLevel,
     name: 'Divino',
     icon: Sword,
-    time: 1,
+    time: 0.8,
     description: 'Para os deuses do jogo',
     color: 'from-violet-600 to-pink-600',
     bgColor: 'bg-violet-500/10 border-violet-500/30'
+  },
+  {
+    id: 'armageddon' as DifficultyLevel,
+    name: 'Armagedon',
+    icon: Flame,
+    time: 0.35,
+    description: '💀 IMPOSSÍVEL - 0.35s de terror puro',
+    color: 'from-red-700 via-orange-600 to-yellow-500',
+    bgColor: 'bg-gradient-to-r from-red-500/20 to-orange-500/20 border-red-600/50 shadow-lg shadow-red-500/20'
   }
 ];
 

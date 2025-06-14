@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { DifficultyLevel } from '@/components/DifficultySelector';
 
@@ -22,10 +21,10 @@ export const difficultySettings = {
   easy: { time: 10, aiLevel: 0.3 },
   medium: { time: 7, aiLevel: 0.5 },
   hard: { time: 5, aiLevel: 0.7 },
-  nightmare: { time: 4, aiLevel: 0.85 },
-  armageddon: { time: 2, aiLevel: 0.95 },
-  insane: { time: 1.5, aiLevel: 0.98 },
-  godlike: { time: 1, aiLevel: 1.0 }
+  nightmare: { time: 3, aiLevel: 0.85 },
+  insane: { time: 1.5, aiLevel: 0.95 },
+  godlike: { time: 0.8, aiLevel: 0.98 },
+  armageddon: { time: 0.35, aiLevel: 1.0 }
 };
 
 export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyLevel = 'medium') => {
