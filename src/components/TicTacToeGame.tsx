@@ -228,24 +228,28 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
             </div>
           </div>
 
-          {currentPlayer === 'X' && isGameActive && !winner && (
-            <div className="space-y-2">
-              <div className="flex items-center justify-center gap-2 text-white/80">
-                <Clock className="w-4 h-4" />
-                <span className="text-sm font-medium">
-                  Tempo: {timeLeft.toFixed(1)}s
-                </span>
+          {/* Container fixo para o timer - sempre presente */}
+          <div className="h-16 flex flex-col justify-center">
+            {currentPlayer === 'X' && isGameActive && !winner && (
+              <div className="space-y-2">
+                <div className="flex items-center justify-center gap-2 text-white/80">
+                  <Clock className="w-4 h-4" />
+                  <span className="text-sm font-medium">
+                    Tempo: {timeLeft.toFixed(1)}s
+                  </span>
+                </div>
+                <div className="w-full bg-gray-700 rounded-full h-2">
+                  <div 
+                    className={`h-2 rounded-full transition-all duration-100 ${getTimeBarColor()}`}
+                    style={{ width: `${(timeLeft / difficultySettings[difficulty].time) * 100}%` }}
+                  />
+                </div>
               </div>
-              <div className="w-full bg-gray-700 rounded-full h-2">
-                <div 
-                  className={`h-2 rounded-full transition-all duration-100 ${getTimeBarColor()}`}
-                  style={{ width: `${(timeLeft / difficultySettings[difficulty].time) * 100}%` }}
-                />
-              </div>
-            </div>
-          )}
+            )}
+          </div>
 
-          <div className="text-center text-xs text-gray-400">
+          {/* Container fixo para instruções */}
+          <div className="h-6 text-center text-xs text-gray-400 flex items-center justify-center">
             {winner ? (
               <span>{canRestart ? 'ESPAÇO para reiniciar' : 'Aguarde 1 segundo...'}</span>
             ) : (
@@ -253,7 +257,8 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
             )}
           </div>
 
-          <div className="text-center">
+          {/* Container fixo para status do jogo */}
+          <div className="h-20 text-center flex flex-col justify-center">
             {winner ? (
               <div className="space-y-4">
                 <div className="text-2xl font-bold text-yellow-400">
@@ -313,7 +318,7 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
             ))}
           </div>
 
-          {/* Container com altura fixa para o histórico */}
+          {/* Container fixo para o histórico */}
           <div className="text-center h-32 flex flex-col justify-start">
             <div className="text-sm text-gray-400 mb-2">Histórico de Jogadas:</div>
             <div className="text-sm text-gray-300 h-24 overflow-y-auto flex-1">
