@@ -6,7 +6,7 @@ import { getComputerMove } from '@/utils/aiLogic';
 import { usePlayerStorage } from '@/hooks/usePlayerStorage';
 
 export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyLevel = 'medium') => {
-  const { updatePlayerProgress } = usePlayerStorage();
+  const { updatePlayerProgress, getOrCreatePlayer } = usePlayerStorage();
   
   const [gameState, setGameState] = useState<GameState>({
     board: Array(9).fill(null),
@@ -23,6 +23,14 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
   });
   const [pieceOrder, setPieceOrder] = useState<{ position: number; player: Player }[]>([]);
   const [removalCycle, setRemovalCycle] = useState<3 | 4>(3);
+
+  // Garante que o jogador existe no storage
+  useEffect(() => {
+    if (playerName) {
+      console.log('Inicializando jogador:', playerName);
+      getOrCreatePlayer(playerName);
+    }
+  }, [playerName, getOrCreatePlayer]);
 
   const makeMove = useCallback((index: number) => {
     if (!gameState.isGameActive || gameState.board[index] || gameState.winner) {
@@ -64,6 +72,7 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     
     if (winner) {
       newHistory.push(`${moveDescription} - VITÓRIA!`);
+      console.log('Jogo terminou:', winner === 'X' ? 'Jogador ganhou' : 'Computador ganhou');
       updatePlayerProgress(playerName, difficulty, winner === 'X');
     } else {
       newHistory.push(moveDescription);

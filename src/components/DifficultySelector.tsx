@@ -133,7 +133,9 @@ const DifficultySelector = ({ onSelect, onBack, onTutorial, currentPlayer }: Dif
                           const progress = player.levelProgress[diff.id];
                           if (progress?.isCleared) {
                             return (
-                              <Trophy key={diff.id} className="w-4 h-4 text-yellow-400" title={`${diff.name} - Zerado!`} />
+                              <div key={diff.id} className="relative">
+                                <Trophy className="w-4 h-4 text-yellow-400" />
+                              </div>
                             );
                           }
                           return null;
@@ -187,7 +189,7 @@ const DifficultySelector = ({ onSelect, onBack, onTutorial, currentPlayer }: Dif
                     {/* Progresso do nível */}
                     <div className="mt-3 text-xs">
                       <div className="flex justify-center items-center gap-2">
-                        <span className="text-green-400">Vitórias: {progress.consecutiveWins}/7</span>
+                        <span className="text-green-400">Vitórias: {progress.consecutiveWins}/10</span>
                         <span className="text-red-400">Derrotas: {progress.totalLosses}/2</span>
                       </div>
                       {progress.isCleared && (
