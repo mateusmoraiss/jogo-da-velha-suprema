@@ -106,32 +106,43 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
       const key = event.key.toLowerCase();
-      let newPosition = selectedPosition;
-
-      // Arrow keys and WASD support
-      if ((key === 'arrowup' || key === 'w') && selectedPosition > 2) {
-        newPosition = selectedPosition - 3;
-      } else if ((key === 'arrowdown' || key === 's') && selectedPosition < 6) {
-        newPosition = selectedPosition + 3;
-      } else if ((key === 'arrowleft' || key === 'a') && selectedPosition % 3 !== 0) {
-        newPosition = selectedPosition - 1;
-      } else if ((key === 'arrowright' || key === 'd') && selectedPosition % 3 !== 2) {
-        newPosition = selectedPosition + 1;
-      }
       
-      if (newPosition !== selectedPosition) {
-        updateSelectedPosition(newPosition);
-      }
-      
-      if (key === ' ' && currentPlayer === 'X' && isGameActive && !winner) {
+      // Se o jogo terminou, ESPAÇO reinicia
+      if (key === ' ' && winner) {
         event.preventDefault();
-        makeMove(selectedPosition);
-        playMoveSound();
+        resetGame();
+        return;
+      }
+      
+      // Controles normais durante o jogo
+      if (!winner && isGameActive) {
+        let newPosition = selectedPosition;
+
+        // Arrow keys and WASD support
+        if ((key === 'arrowup' || key === 'w') && selectedPosition > 2) {
+          newPosition = selectedPosition - 3;
+        } else if ((key === 'arrowdown' || key === 's') && selectedPosition < 6) {
+          newPosition = selectedPosition + 3;
+        } else if ((key === 'arrowleft' || key === 'a') && selectedPosition % 3 !== 0) {
+          newPosition = selectedPosition - 1;
+        } else if ((key === 'arrowright' || key === 'd') && selectedPosition % 3 !== 2) {
+          newPosition = selectedPosition + 1;
+        }
+        
+        if (newPosition !== selectedPosition) {
+          updateSelectedPosition(newPosition);
+        }
+        
+        if (key === ' ' && currentPlayer === 'X') {
+          event.preventDefault();
+          makeMove(selectedPosition);
+          playMoveSound();
+        }
       }
     };
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [selectedPosition, currentPlayer, isGameActive, winner, makeMove, updateSelectedPosition, playMoveSound]);
+  }, [selectedPosition, currentPlayer, isGameActive, winner, makeMove, updateSelectedPosition, playMoveSound, resetGame]);
 
   // Mouse apenas seleciona, não clica para jogar
   const handleCellClick = (index: number) => {
@@ -217,7 +228,11 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
           )}
 
           <div className="text-center text-xs text-gray-400">
-            Use WASD ou setas para navegar • Mouse para selecionar • ESPAÇO para confirmar
+            {winner ? (
+              <span>ESPAÇO para reiniciar</span>
+            ) : (
+              <span>Use WASD ou setas para navegar • Mouse para selecionar • ESPAÇO para confirmar</span>
+            )}
           </div>
 
           <div className="text-center">
