@@ -31,8 +31,9 @@ const DualTicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameC
   const totalPlayerScore = game1.playerScore + game2.playerScore;
   const totalComputerScore = game1.computerScore + game2.computerScore;
   const activeGame = activeBoard === 1 ? game1 : game2;
-  const winner = game1.winner || game2.winner;
+  // O jogo só termina quando ambos tabuleiros terminam
   const isMatchOver = !game1.isGameActive && !game2.isGameActive;
+  // Removido a linha que usa "winner" para determinar fim de partida; usamos apenas isMatchOver agora.
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -41,21 +42,21 @@ const DualTicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameC
       else if (event.key === 'ArrowDown' && newPosition < 6) newPosition += 3;
       else if (event.key === 'ArrowLeft' && newPosition % 3 !== 0) newPosition -= 1;
       else if (event.key === 'ArrowRight' && newPosition % 3 !== 2) newPosition += 1;
-      
+
       if (newPosition !== sharedSelectedPosition) updateSelectedPosition(newPosition);
-      
-      const isAnyGameActive = game1.isGameActive || game2.isGameActive;
-      if (event.key === ' ' && isAnyGameActive) {
+
+      // Permite ação só se o tabuleiro ativo e ativo.
+      if (event.key === ' ') {
         event.preventDefault();
         const gameToPlay = activeBoard === 1 ? game1 : game2;
-        if (gameToPlay.isGameActive) {
+        if (gameToPlay.isGameActive && gameToPlay.currentPlayer === 'X') {
           makeMove(activeBoard, sharedSelectedPosition);
         }
       }
     };
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [sharedSelectedPosition, updateSelectedPosition, makeMove, activeBoard, game1.isGameActive, game2.isGameActive]);
+  }, [sharedSelectedPosition, updateSelectedPosition, makeMove, activeBoard, game1.isGameActive, game2.isGameActive, game1.currentPlayer, game2.currentPlayer]);
 
   const getCellClass = (cell: 'X' | 'O' | null, index: number, boardNum: number) => {
     const baseClass = "w-16 h-16 md:w-20 md:h-20 bg-gray-800/50 backdrop-blur-sm border-2 border-gray-600 rounded-xl flex items-center justify-center text-3xl font-bold transition-all duration-300";
@@ -82,7 +83,10 @@ const DualTicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameC
   };
 
   const handleCellClick = (boardIndex: 1 | 2, cellIndex: number) => {
-    makeMove(boardIndex, cellIndex);
+    const game = boardIndex === 1 ? game1 : game2;
+    if (game.isGameActive && game.currentPlayer === 'X') {
+      makeMove(boardIndex, cellIndex);
+    }
   }
 
   const getBoardStatus = (boardNum: number) => {
@@ -122,7 +126,7 @@ const DualTicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameC
             </Badge>
           </div>
 
-          {activeGame.isGameActive && !winner && (
+          {activeGame.isGameActive && !isMatchOver && (
             <div className="space-y-2">
               <div className="flex items-center justify-center gap-2 text-white/80">
                 <Clock className="w-4 h-4" />

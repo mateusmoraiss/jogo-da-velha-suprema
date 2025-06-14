@@ -25,34 +25,38 @@ export const useDualTicTacToe = (playerName: string, difficulty: DifficultyLevel
   const [sharedSelectedPosition, setSharedSelectedPosition] = useState(4);
   const [activeBoard, setActiveBoard] = useState<1 | 2>(1); // Which board the player should play on
 
+  // Função auxiliar para encontrar o próximo tabuleiro ativo para o jogador X
+  function getNextActiveBoard(current: 1 | 2, g1: GameState, g2: GameState): 1 | 2 | null {
+    if ((current === 1 && g2.isGameActive) || (!g1.isGameActive && g2.isGameActive)) return 2;
+    if ((current === 2 && g1.isGameActive) || (!g2.isGameActive && g1.isGameActive)) return 1;
+    return null; // Ambos encerrados
+  }
+  
+  // Faz a jogada do player no tabuleiro ativo, e alterna para outro tabuleiro ativo se houver.
   const makeMove = useCallback((boardIndex: 1 | 2, cellIndex: number) => {
-    // Player can only move on the active board and when it's their turn
-    if (boardIndex !== activeBoard) return;
-    
-    const game = boardIndex === 1 ? game1 : game2;
+    // O jogador só pode jogar no tabuleiro ativo e ativo
+    const g1 = game1;
+    const g2 = game2;
+    if (boardIndex === 1 && !(activeBoard === 1 && g1.isGameActive)) return;
+    if (boardIndex === 2 && !(activeBoard === 2 && g2.isGameActive)) return;
+    const game = boardIndex === 1 ? g1 : g2;
     const setGame = boardIndex === 1 ? setGame1 : setGame2;
 
-    if (!game.isGameActive || game.board[cellIndex] || game.winner || game.currentPlayer !== 'X') {
-      return;
-    }
+    // Bloqueia jogada inválida
+    if (!game.isGameActive || game.board[cellIndex] || game.winner || game.currentPlayer !== 'X') return;
 
     setGame(prevState => {
       let newBoard = [...prevState.board];
       let newMoveCount = prevState.moveCount + 1;
-      
       const filledCells = newBoard.filter(cell => cell !== null).length;
       if (filledCells >= 6) {
         newBoard = removeOldestMoves(newBoard, 'X');
       }
-
       newBoard[cellIndex] = 'X';
-      
       const winner = checkWinner(newBoard);
       const newHistory = [...prevState.moveHistory, `${playerName} jogou na posição ${cellIndex + 1}`];
-
       let newPlayerScore = prevState.playerScore;
       if (winner === 'X') newPlayerScore++;
-
       return {
         ...prevState,
         board: newBoard,
@@ -61,17 +65,22 @@ export const useDualTicTacToe = (playerName: string, difficulty: DifficultyLevel
         playerScore: newPlayerScore,
         moveHistory: newHistory,
         moveCount: newMoveCount,
-        currentPlayer: 'O', // Pass turn to computer
+        currentPlayer: 'O',
         timeLeft: difficultySettings[prevState.difficulty].time,
       };
     });
-    
-    // Switch to the other board for the next player move
-    setActiveBoard(boardIndex === 1 ? 2 : 1);
+
+    // Seleciona próximo tabuleiro ativo para o jogador X, se existir
+    const nextBoard = getNextActiveBoard(boardIndex, 
+      boardIndex === 1 ? { ...g1, isGameActive: false } : g1, // Marcar o jogado agora como inativo se foi terminado
+      boardIndex === 2 ? { ...g2, isGameActive: false } : g2
+    );
+    if (nextBoard) setActiveBoard(nextBoard);
 
   }, [playerName, game1, game2, activeBoard]);
+  
 
-  // Computer move effect for Game 1
+  // Efeito para jogada do computador no board 1
   useEffect(() => {
     if (game1.currentPlayer === 'O' && game1.isGameActive && !game1.winner) {
       const timer = setTimeout(() => {
@@ -95,16 +104,20 @@ export const useDualTicTacToe = (playerName: string, difficulty: DifficultyLevel
               isGameActive: !winner,
               computerScore: newComputerScore,
               moveHistory: [...prevState.moveHistory, `Computador jogou na posição ${computerMoveIndex + 1}`],
-              currentPlayer: 'X', // Switch back to player
+              currentPlayer: 'X', // Troca para o X, mas cuidado com board ativo
             };
           });
+          // Após jogada do computador, ativa o outro tabuleiro se for possível
+          setTimeout(() => {
+            if (game2.isGameActive && activeBoard !== 2) setActiveBoard(2);
+          }, 300);
         }
-      }, 1000);
+      }, 450); // Mais rápido para dual
       return () => clearTimeout(timer);
     }
-  }, [game1.currentPlayer, game1.isGameActive, game1.winner, game1.board, game1.difficulty]);
+  }, [game1.currentPlayer, game1.isGameActive, game1.winner, game1.board, game1.difficulty, activeBoard, game2.isGameActive]);
 
-  // Computer move effect for Game 2
+  // Efeito para jogada do computador no board 2
   useEffect(() => {
     if (game2.currentPlayer === 'O' && game2.isGameActive && !game2.winner) {
       const timer = setTimeout(() => {
@@ -128,16 +141,20 @@ export const useDualTicTacToe = (playerName: string, difficulty: DifficultyLevel
               isGameActive: !winner,
               computerScore: newComputerScore,
               moveHistory: [...prevState.moveHistory, `Computador jogou na posição ${computerMoveIndex + 1}`],
-              currentPlayer: 'X', // Switch back to player
+              currentPlayer: 'X', // Troca para o X, mas cuidado com board ativo
             };
           });
+          // Após jogada do computador, ativa o outro tabuleiro se for possível
+          setTimeout(() => {
+            if (game1.isGameActive && activeBoard !== 1) setActiveBoard(1);
+          }, 300);
         }
-      }, 1000);
+      }, 450); // Mais rápido para dual
       return () => clearTimeout(timer);
     }
-  }, [game2.currentPlayer, game2.isGameActive, game2.winner, game2.board, game2.difficulty]);
+  }, [game2.currentPlayer, game2.isGameActive, game2.winner, game2.board, game2.difficulty, activeBoard, game1.isGameActive]);
 
-  // Timer effect for player's turn
+  // Timer só para o board ativo e player X
   useEffect(() => {
     const activeGame = activeBoard === 1 ? game1 : game2;
     const setActiveGame = activeBoard === 1 ? setGame1 : setGame2;
@@ -147,26 +164,38 @@ export const useDualTicTacToe = (playerName: string, difficulty: DifficultyLevel
         setActiveGame(prev => ({ ...prev, timeLeft: prev.timeLeft - 0.1 }));
       }, 100);
       return () => clearTimeout(timer);
-    } else if (activeGame.currentPlayer === 'X' && activeGame.timeLeft <= 0) {
-      // Time ran out, pass turn to computer
-      setActiveGame(prev => ({ 
-        ...prev, 
+    } else if (activeGame.currentPlayer === 'X' && activeGame.isGameActive && activeGame.timeLeft <= 0) {
+      // Acabou o tempo, passa vez pro computador apenas nesse board
+      setActiveGame(prev => ({
+        ...prev,
         currentPlayer: 'O',
         timeLeft: difficultySettings[prev.difficulty].time
       }));
     }
   }, [game1, game2, activeBoard]);
+  
+  // Mantém posição selecionada no tabuleiro ativo e válido
+  useEffect(() => {
+    // Se mudar para um board inativo, tenta mudar para o ativo
+    if (activeBoard === 1 && !game1.isGameActive && game2.isGameActive) {
+      setActiveBoard(2);
+    } else if (activeBoard === 2 && !game2.isGameActive && game1.isGameActive) {
+      setActiveBoard(1);
+    }
+  }, [game1.isGameActive, game2.isGameActive, activeBoard]);
 
   const resetGame = useCallback(() => {
     setGame1(createInitialState(difficulty));
     setGame2(createInitialState(difficulty));
     setActiveBoard(1);
+    setSharedSelectedPosition(4);
   }, [difficulty]);
 
   const changeDifficulty = useCallback((newDifficulty: DifficultyLevel) => {
     setGame1(createInitialState(newDifficulty));
     setGame2(createInitialState(newDifficulty));
     setActiveBoard(1);
+    setSharedSelectedPosition(4);
   }, []);
 
   return {
