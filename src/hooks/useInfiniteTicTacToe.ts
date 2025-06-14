@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { GameState, DifficultyLevel, Player } from '@/types/gameTypes';
 import { difficultySettings } from '@/constants/difficultySettings';
@@ -28,24 +29,25 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     let newBoard = [...gameState.board];
     let currentPieceOrder = [...pieceOrder];
     const currentPlayer = gameState.currentPlayer;
-    const opponentPlayer = currentPlayer === 'X' ? 'O' : 'X';
 
     // 1. Adiciona a nova peça ao tabuleiro e ao histórico de ordem
     newBoard[index] = currentPlayer;
     currentPieceOrder.push({ position: index, player: currentPlayer });
 
-    // 2. Verifica se o jogador atual agora tem 4 ou mais peças
-    const playerPieces = currentPieceOrder.filter(p => p.player === currentPlayer);
-    if (playerPieces.length >= 4) {
-      // Identifica as 2 peças mais antigas do jogador atual
-      const playerPiecesToRemove = playerPieces.slice(0, 2);
+    // 2. Verifica se o tabuleiro está cheio para remover as peças mais antigas
+    const isBoardFull = !newBoard.includes(null);
+
+    if (isBoardFull) {
+      // Identifica as 2 peças mais antigas do jogador 'X'
+      const playerXPieces = currentPieceOrder.filter(p => p.player === 'X');
+      const piecesToRemoveX = playerXPieces.slice(0, 2);
       
-      // Identifica as 2 peças mais antigas do oponente
-      const opponentPieces = currentPieceOrder.filter(p => p.player === opponentPlayer);
-      const opponentPiecesToRemove = opponentPieces.slice(0, 2);
+      // Identifica as 2 peças mais antigas do jogador 'O'
+      const playerOPieces = currentPieceOrder.filter(p => p.player === 'O');
+      const piecesToRemoveO = playerOPieces.slice(0, 2);
 
       // Combina todas as peças a serem removidas
-      const allPiecesToRemove = [...playerPiecesToRemove, ...opponentPiecesToRemove];
+      const allPiecesToRemove = [...piecesToRemoveX, ...piecesToRemoveO];
       const positionsToRemove = allPiecesToRemove.map(p => p.position);
 
       // 3. Remove as peças do tabuleiro
