@@ -38,13 +38,13 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     const isBoardFull = !newBoard.includes(null);
 
     if (isBoardFull) {
-      // Identifica as 2 peças mais antigas do jogador 'X'
+      // Identifica as 3 peças mais antigas do jogador 'X'
       const playerXPieces = currentPieceOrder.filter(p => p.player === 'X');
-      const piecesToRemoveX = playerXPieces.slice(0, 2);
+      const piecesToRemoveX = playerXPieces.slice(0, 3);
       
-      // Identifica as 2 peças mais antigas do jogador 'O'
+      // Identifica as 3 peças mais antigas do jogador 'O'
       const playerOPieces = currentPieceOrder.filter(p => p.player === 'O');
-      const piecesToRemoveO = playerOPieces.slice(0, 2);
+      const piecesToRemoveO = playerOPieces.slice(0, 3);
 
       // Combina todas as peças a serem removidas
       const allPiecesToRemove = [...piecesToRemoveX, ...piecesToRemoveO];
