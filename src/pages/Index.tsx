@@ -41,7 +41,8 @@ const Index = () => {
         return <DifficultySelector 
           onSelect={handleDifficultySelect} 
           onBack={() => setStep('name')} 
-          onTutorial={handleShowTutorial} 
+          onTutorial={handleShowTutorial}
+          currentPlayer={playerName}
         />;
       case 'playing':
         return <TicTacToeGame 

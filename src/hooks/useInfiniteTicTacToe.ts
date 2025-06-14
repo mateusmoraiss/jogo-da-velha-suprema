@@ -3,8 +3,11 @@ import { GameState, DifficultyLevel, Player } from '@/types/gameTypes';
 import { difficultySettings } from '@/constants/difficultySettings';
 import { checkWinner } from '@/utils/gameLogic';
 import { getComputerMove } from '@/utils/aiLogic';
+import { usePlayerStorage } from '@/hooks/usePlayerStorage';
 
 export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyLevel = 'medium') => {
+  const { updatePlayerProgress } = usePlayerStorage();
+  
   const [gameState, setGameState] = useState<GameState>({
     board: Array(9).fill(null),
     currentPlayer: 'X',
@@ -19,7 +22,7 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     selectedPosition: 4
   });
   const [pieceOrder, setPieceOrder] = useState<{ position: number; player: Player }[]>([]);
-  const [removalCycle, setRemovalCycle] = useState<3 | 4>(3); // Alterna entre 3 e 4
+  const [removalCycle, setRemovalCycle] = useState<3 | 4>(3);
 
   const makeMove = useCallback((index: number) => {
     if (!gameState.isGameActive || gameState.board[index] || gameState.winner) {
@@ -30,38 +33,29 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     let currentPieceOrder = [...pieceOrder];
     const currentPlayer = gameState.currentPlayer;
 
-    // 1. Adiciona a nova peça ao tabuleiro e ao histórico de ordem
     newBoard[index] = currentPlayer;
     currentPieceOrder.push({ position: index, player: currentPlayer });
 
-    // 2. Verifica se o tabuleiro está cheio para remover as peças mais antigas
     const isBoardFull = !newBoard.includes(null);
 
     if (isBoardFull) {
-      // Identifica as peças mais antigas de cada jogador baseado no ciclo atual
       const playerXPieces = currentPieceOrder.filter(p => p.player === 'X');
       const piecesToRemoveX = playerXPieces.slice(0, removalCycle);
       
       const playerOPieces = currentPieceOrder.filter(p => p.player === 'O');
       const piecesToRemoveO = playerOPieces.slice(0, removalCycle);
 
-      // Combina todas as peças a serem removidas
       const allPiecesToRemove = [...piecesToRemoveX, ...piecesToRemoveO];
       const positionsToRemove = allPiecesToRemove.map(p => p.position);
 
-      // 3. Remove as peças do tabuleiro
       positionsToRemove.forEach(pos => {
         newBoard[pos] = null;
       });
       
-      // 4. Atualiza o histórico de ordem das peças
       currentPieceOrder = currentPieceOrder.filter(p => !positionsToRemove.includes(p.position));
-
-      // 5. Alterna o ciclo de remoção para a próxima vez
       setRemovalCycle(prev => prev === 3 ? 4 : 3);
     }
     
-    // ... keep existing code (winner check, history update, score update, state update)
     const winner = checkWinner(newBoard);
     
     const newHistory = [...gameState.moveHistory];
@@ -70,6 +64,7 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     
     if (winner) {
       newHistory.push(`${moveDescription} - VITÓRIA!`);
+      updatePlayerProgress(playerName, difficulty, winner === 'X');
     } else {
       newHistory.push(moveDescription);
     }
@@ -99,9 +94,8 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       moveCount: prevState.moveCount + 1,
       timeLeft: difficultySettings[prevState.difficulty].time,
     }));
-  }, [gameState, pieceOrder, playerName, removalCycle]);
+  }, [gameState, pieceOrder, playerName, removalCycle, difficulty, updatePlayerProgress]);
 
-  // ... keep existing code (updateSelectedPosition, timer effects, computer move effect)
   const updateSelectedPosition = useCallback((newPosition: number) => {
     setGameState(prev => ({
       ...prev,
@@ -157,7 +151,7 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       selectedPosition: 4
     }));
     setPieceOrder([]);
-    setRemovalCycle(3); // Reset para 3
+    setRemovalCycle(3);
   }, []);
 
   const changeDifficulty = useCallback((newDifficulty: DifficultyLevel) => {
@@ -174,7 +168,7 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       selectedPosition: 4
     }));
     setPieceOrder([]);
-    setRemovalCycle(3); // Reset para 3
+    setRemovalCycle(3);
   }, []);
 
   return {
