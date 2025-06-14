@@ -6,18 +6,17 @@ import { Badge } from '@/components/ui/badge';
 import { useInfiniteTicTacToe } from '@/hooks/useInfiniteTicTacToe';
 import { difficultySettings } from '@/constants/difficultySettings';
 import { DifficultyLevel } from '@/types/gameTypes';
-import PlayerNameDialog from './PlayerNameDialog';
-import DifficultySelector from './DifficultySelector';
-import Tutorial from './Tutorial';
-import { Sparkles, RotateCcw, Settings, Clock, User } from 'lucide-react';
+import { Sparkles, RotateCcw, Settings, Clock, User, Users } from 'lucide-react';
 
-const TicTacToeGame = () => {
-  const [playerName, setPlayerName] = useState<string>('');
-  const [showNameDialog, setShowNameDialog] = useState(true);
-  const [showDifficultySelector, setShowDifficultySelector] = useState(false);
-  const [showTutorial, setShowTutorial] = useState(false);
-  const [selectedDifficulty, setSelectedDifficulty] = useState<DifficultyLevel>('medium');
-  
+interface TicTacToeGameProps {
+  playerName: string;
+  difficulty: DifficultyLevel;
+  onDifficultyChange: () => void;
+  onNameChange: () => void;
+  onModeChange: () => void;
+}
+
+const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChange, onModeChange }: TicTacToeGameProps) => {
   const {
     board,
     currentPlayer,
@@ -27,75 +26,34 @@ const TicTacToeGame = () => {
     computerScore,
     moveHistory,
     timeLeft,
-    difficulty,
     selectedPosition,
     makeMove,
     resetGame,
     changeDifficulty,
     updateSelectedPosition
-  } = useInfiniteTicTacToe(playerName, selectedDifficulty);
+  } = useInfiniteTicTacToe(playerName, difficulty);
 
-  // Keyboard controls - simple navigation
+  // Keyboard controls
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
-      if (showNameDialog || showDifficultySelector || showTutorial) return;
-
       const key = event.key;
       let newPosition = selectedPosition;
 
-      // Handle arrow key navigation
-      if (key === 'ArrowUp') {
-        event.preventDefault();
-        if (selectedPosition > 2) {
-          newPosition = selectedPosition - 3;
-        }
-      } else if (key === 'ArrowDown') {
-        event.preventDefault();
-        if (selectedPosition < 6) {
-          newPosition = selectedPosition + 3;
-        }
-      } else if (key === 'ArrowLeft') {
-        event.preventDefault();
-        if (selectedPosition % 3 !== 0) {
-          newPosition = selectedPosition - 1;
-        }
-      } else if (key === 'ArrowRight') {
-        event.preventDefault();
-        if (selectedPosition % 3 !== 2) {
-          newPosition = selectedPosition + 1;
-        }
-      }
+      if (key === 'ArrowUp' && selectedPosition > 2) newPosition = selectedPosition - 3;
+      else if (key === 'ArrowDown' && selectedPosition < 6) newPosition = selectedPosition + 3;
+      else if (key === 'ArrowLeft' && selectedPosition % 3 !== 0) newPosition = selectedPosition - 1;
+      else if (key === 'ArrowRight' && selectedPosition % 3 !== 2) newPosition = selectedPosition + 1;
       
-      // Update position if changed
-      if (newPosition !== selectedPosition) {
-        updateSelectedPosition(newPosition);
-      }
+      if (newPosition !== selectedPosition) updateSelectedPosition(newPosition);
       
-      // Handle space for confirming move (only during player's turn)
       if (key === ' ' && currentPlayer === 'X' && isGameActive && !winner) {
         event.preventDefault();
         makeMove(selectedPosition);
       }
     };
-
     window.addEventListener('keydown', handleKeyPress);
-
-    return () => {
-      window.removeEventListener('keydown', handleKeyPress);
-    };
-  }, [selectedPosition, currentPlayer, isGameActive, winner, makeMove, updateSelectedPosition, showNameDialog, showDifficultySelector, showTutorial]);
-
-  const handleNameSubmit = (name: string) => {
-    setPlayerName(name);
-    setShowNameDialog(false);
-    setShowDifficultySelector(true);
-  };
-
-  const handleDifficultySelect = (difficulty: DifficultyLevel) => {
-    setSelectedDifficulty(difficulty);
-    changeDifficulty(difficulty);
-    setShowDifficultySelector(false);
-  };
+    return () => window.removeEventListener('keydown', handleKeyPress);
+  }, [selectedPosition, currentPlayer, isGameActive, winner, makeMove, updateSelectedPosition]);
 
   const handleCellClick = (index: number) => {
     if (currentPlayer === 'X' && isGameActive && !winner) {
@@ -105,30 +63,17 @@ const TicTacToeGame = () => {
 
   const getCellClass = (index: number) => {
     const baseClass = "w-20 h-20 bg-gray-800/50 backdrop-blur-sm border-2 border-gray-600 rounded-xl flex items-center justify-center text-3xl font-bold cursor-pointer transition-all duration-300 hover:bg-gray-700/50 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20";
-    
-    // Always highlight selected position (even during computer's turn)
     const isSelected = index === selectedPosition;
     const selectedClass = isSelected ? "ring-2 ring-yellow-400 ring-opacity-75 bg-yellow-500/10" : "";
     
-    if (board[index] === 'X') {
-      return `${baseClass} ${selectedClass} text-blue-400 bg-blue-500/20 border-blue-500/40 shadow-lg shadow-blue-500/20`;
-    } else if (board[index] === 'O') {
-      return `${baseClass} ${selectedClass} text-cyan-400 bg-cyan-500/20 border-cyan-500/40 shadow-lg shadow-cyan-500/20`;
-    }
+    if (board[index] === 'X') return `${baseClass} ${selectedClass} text-blue-400 bg-blue-500/20 border-blue-500/40 shadow-lg shadow-blue-500/20`;
+    if (board[index] === 'O') return `${baseClass} ${selectedClass} text-cyan-400 bg-cyan-500/20 border-cyan-500/40 shadow-lg shadow-cyan-500/20`;
     
     return `${baseClass} ${selectedClass} hover:border-gray-500`;
   };
 
   const getDifficultyColor = () => {
-    const colors = {
-      easy: 'text-green-400',
-      medium: 'text-blue-400',
-      hard: 'text-purple-400',
-      nightmare: 'text-red-400',
-      insane: 'text-yellow-400',
-      godlike: 'text-violet-400',
-      armageddon: 'text-orange-400'
-    };
+    const colors = { easy: 'text-green-400', medium: 'text-blue-400', hard: 'text-purple-400', nightmare: 'text-red-400', insane: 'text-yellow-400', godlike: 'text-violet-400', armageddon: 'text-orange-400' };
     return colors[difficulty];
   };
 
@@ -138,25 +83,6 @@ const TicTacToeGame = () => {
     return 'bg-gradient-to-r from-red-500 to-pink-500';
   };
 
-  if (showTutorial) {
-    return <Tutorial onClose={() => setShowTutorial(false)} />;
-  }
-
-  if (showNameDialog) {
-    return <PlayerNameDialog 
-      onSubmit={handleNameSubmit} 
-      onTutorial={() => setShowTutorial(true)}
-    />;
-  }
-
-  if (showDifficultySelector) {
-    return <DifficultySelector 
-      onSelect={handleDifficultySelect}
-      onBack={() => setShowNameDialog(true)}
-      onTutorial={() => setShowTutorial(true)}
-    />;
-  }
-
   return (
     <div className="w-full max-w-2xl mx-auto">
       <Card className="bg-gray-900/80 backdrop-blur-lg border-gray-700/50 shadow-2xl">
@@ -164,7 +90,7 @@ const TicTacToeGame = () => {
           <div className="flex items-center justify-center gap-2">
             <Sparkles className="w-6 h-6 text-yellow-400" />
             <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-              Jogo da Velha Infinito
+              Velha Suprema
             </CardTitle>
             <Sparkles className="w-6 h-6 text-yellow-400" />
           </div>
@@ -175,10 +101,11 @@ const TicTacToeGame = () => {
                 {playerName}: {playerScore}
               </Badge>
             </div>
-            <div className="text-center">
+            <div className="flex flex-col items-center">
               <Badge variant="outline" className={`${getDifficultyColor()} bg-gray-800/50 border-gray-600 px-3 py-1 text-sm`}>
                 {difficulty.toUpperCase()}
               </Badge>
+              <Badge variant="outline" className="mt-1 bg-blue-500/20 text-blue-300 border-blue-500/30 px-3 py-1 text-xs">MODO CLÁSSICO</Badge>
             </div>
             <div className="text-center">
               <Badge variant="outline" className="bg-cyan-500/20 text-cyan-400 border-cyan-500/40 px-4 py-2 text-lg">
@@ -187,7 +114,6 @@ const TicTacToeGame = () => {
             </div>
           </div>
 
-          {/* Timer */}
           {currentPlayer === 'X' && isGameActive && !winner && (
             <div className="space-y-2">
               <div className="flex items-center justify-center gap-2 text-white/80">
@@ -205,7 +131,6 @@ const TicTacToeGame = () => {
             </div>
           )}
 
-          {/* Keyboard Controls Hint */}
           <div className="text-center text-xs text-gray-400">
             Use as setas do teclado para navegar • ESPAÇO para confirmar
           </div>
@@ -216,26 +141,34 @@ const TicTacToeGame = () => {
                 <div className="text-2xl font-bold text-yellow-400">
                   🎉 {winner === 'X' ? playerName : 'Computador'} Venceu! 🎉
                 </div>
-                <div className="flex gap-2 justify-center">
+                <div className="flex gap-2 justify-center flex-wrap">
                   <Button 
                     onClick={resetGame}
-                    className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold px-6 py-2 rounded-lg transition-all duration-300 transform hover:scale-105"
+                    className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold px-4 py-2 rounded-lg"
                   >
                     <RotateCcw className="w-4 h-4 mr-2" />
                     Jogar Novamente
                   </Button>
                   <Button 
-                    onClick={() => setShowDifficultySelector(true)}
+                    onClick={onDifficultyChange}
                     variant="outline"
-                    className="bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50 px-6 py-2 rounded-lg transition-all duration-300"
+                    className="bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50 px-4 py-2"
                   >
                     <Settings className="w-4 h-4 mr-2" />
                     Mudar Nível
                   </Button>
-                  <Button 
-                    onClick={() => setShowNameDialog(true)}
+                   <Button 
+                    onClick={onModeChange}
                     variant="outline"
-                    className="bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50 px-6 py-2 rounded-lg transition-all duration-300"
+                    className="bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50 px-4 py-2"
+                  >
+                    <Users className="w-4 h-4 mr-2" />
+                    Mudar Modo
+                  </Button>
+                  <Button 
+                    onClick={onNameChange}
+                    variant="outline"
+                    className="bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50 px-4 py-2"
                   >
                     <User className="w-4 h-4 mr-2" />
                     Trocar Nome
@@ -273,7 +206,7 @@ const TicTacToeGame = () => {
             <div className="text-center">
               <div className="text-sm text-gray-400 mb-2">Histórico de Jogadas:</div>
               <div className="text-sm text-gray-300 max-h-20 overflow-y-auto">
-                {moveHistory.slice(-3).map((move, index) => (
+                {moveHistory.slice(-5).reverse().map((move, index) => (
                   <div key={index} className="mb-1">
                     {move}
                   </div>
