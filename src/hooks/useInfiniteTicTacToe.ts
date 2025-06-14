@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from 'react';
 import { DifficultyLevel } from '@/components/DifficultySelector';
 
@@ -103,11 +102,12 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     return availableSpots[Math.floor(Math.random() * availableSpots.length)] as number;
   }, [canWinNextMove, gameState.difficulty]);
 
-  const removeOldestMove = useCallback((board: Board, player: 'X' | 'O'): Board => {
+  const removeOldestMoves = useCallback((board: Board, player: 'X' | 'O'): Board => {
     const newBoard = [...board];
+    let removedCount = 0;
     
-    // Don't remove if it would create a winning position for opponent
-    for (let i = 0; i < 9; i++) {
+    // Remove 2 oldest pieces of the current player
+    for (let i = 0; i < 9 && removedCount < 2; i++) {
       if (newBoard[i] === player) {
         const testBoard = [...newBoard];
         testBoard[i] = null;
@@ -117,6 +117,16 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
         const wouldLose = canWinNextMove(testBoard, opponent) !== -1;
         
         if (!wouldLose) {
+          newBoard[i] = null;
+          removedCount++;
+        }
+      }
+    }
+    
+    // If we couldn't remove 2 pieces safely, remove at least 1
+    if (removedCount === 0) {
+      for (let i = 0; i < 9; i++) {
+        if (newBoard[i] === player) {
           newBoard[i] = null;
           break;
         }
@@ -135,11 +145,11 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       let newBoard = [...prevState.board];
       let newMoveCount = prevState.moveCount + 1;
       
-      // Check if board is full and we need to remove oldest move
+      // Check if board is full (all 9 positions filled)
       const filledCells = newBoard.filter(cell => cell !== null).length;
-      if (filledCells >= 6) {
-        // Remove oldest move of current player before placing new one
-        newBoard = removeOldestMove(newBoard, prevState.currentPlayer);
+      if (filledCells >= 9) {
+        // Remove 2 oldest moves of current player before placing new one
+        newBoard = removeOldestMoves(newBoard, prevState.currentPlayer);
       }
 
       newBoard[index] = prevState.currentPlayer;
@@ -171,7 +181,7 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
         timeLeft: difficultySettings[prevState.difficulty].time
       };
     });
-  }, [checkWinner, removeOldestMove, playerName]);
+  }, [checkWinner, removeOldestMoves, playerName]);
 
   const updateSelectedPosition = useCallback((newPosition: number) => {
     setGameState(prev => ({
