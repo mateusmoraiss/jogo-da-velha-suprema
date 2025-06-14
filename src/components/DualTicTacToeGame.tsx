@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -33,6 +32,7 @@ const DualTicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameC
   const totalComputerScore = game1.computerScore + game2.computerScore;
   const activeGame = activeBoard === 1 ? game1 : game2;
   const winner = game1.winner || game2.winner;
+  const isMatchOver = !game1.isGameActive && !game2.isGameActive;
 
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
@@ -44,14 +44,18 @@ const DualTicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameC
       
       if (newPosition !== sharedSelectedPosition) updateSelectedPosition(newPosition);
       
-      if (event.key === ' ' && !winner) {
+      const isAnyGameActive = game1.isGameActive || game2.isGameActive;
+      if (event.key === ' ' && isAnyGameActive) {
         event.preventDefault();
-        makeMove(activeBoard, sharedSelectedPosition);
+        const gameToPlay = activeBoard === 1 ? game1 : game2;
+        if (gameToPlay.isGameActive) {
+          makeMove(activeBoard, sharedSelectedPosition);
+        }
       }
     };
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [sharedSelectedPosition, updateSelectedPosition, makeMove, activeBoard, winner]);
+  }, [sharedSelectedPosition, updateSelectedPosition, makeMove, activeBoard, game1.isGameActive, game2.isGameActive]);
 
   const getCellClass = (cell: 'X' | 'O' | null, index: number, boardNum: number) => {
     const baseClass = "w-16 h-16 md:w-20 md:h-20 bg-gray-800/50 backdrop-blur-sm border-2 border-gray-600 rounded-xl flex items-center justify-center text-3xl font-bold transition-all duration-300";
@@ -136,9 +140,13 @@ const DualTicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameC
           </div>
 
           <div className="text-center">
-            {winner && (
+            {isMatchOver && (
               <div className="space-y-4">
-                <div className="text-2xl font-bold text-yellow-400">🎉 {winner === 'X' ? playerName : 'Computador'} Venceu em um dos tabuleiros! 🎉</div>
+                <div className="text-2xl font-bold text-yellow-400">
+                  {totalPlayerScore > totalComputerScore && `🎉 ${playerName} Venceu a partida! 🎉`}
+                  {totalComputerScore > totalPlayerScore && `🎉 Computador Venceu a partida! 🎉`}
+                  {totalComputerScore === totalPlayerScore && `😲 Empate incrível! 😲`}
+                </div>
                 <div className="flex gap-2 justify-center flex-wrap">
                   <Button onClick={resetGame} className="bg-gradient-to-r from-blue-600 to-cyan-600"> <RotateCcw className="w-4 h-4 mr-2" /> Jogar Novamente </Button>
                   <Button onClick={onDifficultyChange} variant="outline"> <Settings className="w-4 h-4 mr-2" /> Mudar Nível </Button>
