@@ -1,4 +1,3 @@
-
 import { Board, Player } from '@/types/gameTypes';
 
 export const checkWinner = (board: Board): Player => {
@@ -97,68 +96,85 @@ export const getPlayerPositionsByImportance = (board: Board, player: Player): nu
   });
 };
 
+/**
+ * Identify pieces of player that are part of a critical line (one away from victory)
+ */
+function getCriticalPositions(board: Board, player: Player): number[] {
+  const winningLines = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+    [0, 3, 6], [1, 4, 7], [2, 5, 8], // cols
+    [0, 4, 8], [2, 4, 6] // diags
+  ];
+  const critical: Set<number> = new Set();
+  for (const line of winningLines) {
+    const values = line.map(i => board[i]);
+    const playerCount = values.filter(v => v === player).length;
+    const emptyCount = values.filter(v => v === null).length;
+    // Line where player is two and one empty (so a win is possible immediately)
+    if (playerCount === 2 && emptyCount === 1) {
+      line.forEach(i => { if (board[i] === player) critical.add(i); });
+    }
+  }
+  return Array.from(critical);
+}
+
+/**
+ * Pieces that are part of ANY active opportunity line for the player (no opponent in line)
+ */
+function getActiveOpportunityPositions(board: Board, player: Player): number[] {
+  const winningLines = [
+    [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+    [0, 3, 6], [1, 4, 7], [2, 5, 8], // cols
+    [0, 4, 8], [2, 4, 6] // diags
+  ];
+  const opportunities: Set<number> = new Set();
+  const opponent = player === "X" ? "O" : "X";
+  for (const line of winningLines) {
+    const values = line.map(i => board[i]);
+    const hasOpponent = values.includes(opponent);
+    if (!hasOpponent && values.some(v => v === player)) {
+      line.forEach(i => { if (board[i] === player) opportunities.add(i); });
+    }
+  }
+  return Array.from(opportunities);
+}
+
+/**
+ * Improved, safe piece removal (never break own immediate win, never remove crucial pieces)
+ */
 export const removeOldestMoves = (board: Board, player: 'X' | 'O'): Board => {
   const newBoard = [...board];
-  const opponent = player === 'X' ? 'O' : 'X';
-  
-  // Find all positions of the current player, sorted by importance
-  const playerPositions = getPlayerPositionsByImportance(newBoard, player);
-  
-  // If player has less than 3 pieces, don't remove anything
-  if (playerPositions.length < 3) {
-    return newBoard;
-  }
-  
-  let removedCount = 0;
-  const maxRemove = Math.min(2, playerPositions.length - 1); // Never remove all pieces
-  
-  // Evaluate each position for removal safety
-  const removalCandidates = playerPositions.map(pos => {
-    const testBoard = [...newBoard];
-    testBoard[pos] = null;
-    
-    // Check various factors
-    const wouldAllowOpponentWin = canWinNextMove(testBoard, opponent) !== -1;
-    const wouldPreventPlayerWin = canWinNextMove(newBoard, player) !== -1 && canWinNextMove(testBoard, player) === -1;
-    const wouldCreateFork = wouldCreateOpponentFork(newBoard, pos, player);
-    const playerOpportunitiesBefore = countWinningOpportunities(newBoard, player);
-    const playerOpportunitiesAfter = countWinningOpportunities(testBoard, player);
-    const wouldReduceOpportunities = playerOpportunitiesAfter < playerOpportunitiesBefore;
-    
-    return {
-      position: pos,
-      safe: !wouldAllowOpponentWin && !wouldPreventPlayerWin && !wouldCreateFork,
-      opportunityLoss: playerOpportunitiesBefore - playerOpportunitiesAfter,
-      strategicValue: getStrategicValue(pos)
-    };
-  });
+  const opponent = player === "X" ? "O" : "X";
+  // Find all positions of player, in move order (oldest first in move list, or by index fallback)
+  // We'll sort corners < center < edges for backup, but focus on logic below.
+  const playerPositions = [];
+  for (let i=0; i<9; i++) if (newBoard[i] === player) playerPositions.push(i);
+  // If player has 3 or less, don't remove anything
+  if (playerPositions.length < 3) return newBoard;
 
-  // Sort by safety first, then by opportunity loss, then by strategic value
-  removalCandidates.sort((a, b) => {
-    if (a.safe !== b.safe) return a.safe ? -1 : 1; // Safe moves first
-    if (a.opportunityLoss !== b.opportunityLoss) return a.opportunityLoss - b.opportunityLoss; // Less opportunity loss first
-    return a.strategicValue - b.strategicValue; // Remove less strategic pieces first
-  });
+  // HIGH PRIORITY: Never remove if piece is part of an imminent win (critical positions)
+  const criticals = getCriticalPositions(newBoard, player);
 
-  // Remove pieces starting with the safest candidates
-  for (const candidate of removalCandidates) {
-    if (removedCount >= maxRemove) break;
-    
-    if (candidate.safe || removedCount === 0) { // Always remove at least one if needed
-      newBoard[candidate.position] = null;
-      removedCount++;
-    }
+  // PRIORITY: Try to preserve all pieces part of active opportunities
+  const activeOpps = getActiveOpportunityPositions(newBoard, player);
+
+  // Can only remove from own non-critical, non-opportunity pieces
+  const removable = playerPositions.filter(pos => !criticals.includes(pos) && !activeOpps.includes(pos));
+  // If none left, remove non-criticals:
+  const backupRemovable = playerPositions.filter(pos => !criticals.includes(pos));
+  // If even then none left, fallback to remove any (but this is rare/undesirable):
+  const finalRemovable = playerPositions;
+
+  let chosen;
+  if (removable.length > 0) {
+    chosen = removable[0]; // Remove an old/edge piece that plays no critical role
+  } else if (backupRemovable.length > 0) {
+    chosen = backupRemovable[0];
+  } else {
+    // Should basically only happen on totally filled board (all critical)
+    chosen = finalRemovable[0];
   }
-  
-  // If we couldn't remove enough pieces safely, remove the least strategic ones
-  if (removedCount < maxRemove) {
-    const remainingPositions = playerPositions.filter(pos => newBoard[pos] === player);
-    for (let i = 0; i < remainingPositions.length && removedCount < maxRemove; i++) {
-      newBoard[remainingPositions[i]] = null;
-      removedCount++;
-    }
-  }
-  
+  newBoard[chosen] = null;
   return newBoard;
 };
 
