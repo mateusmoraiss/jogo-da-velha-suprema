@@ -16,6 +16,7 @@ interface TicTacToeGameProps {
 
 const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChange }: TicTacToeGameProps) => {
   const [canRestart, setCanRestart] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   
   const {
     board,
@@ -33,7 +34,18 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
     updateSelectedPosition
   } = useInfiniteTicTacToe(playerName, difficulty);
 
-  // Controla o delay para reiniciar
+  // Detecta se é uma tela pequena (mobile/tablet)
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768); // 768px é o breakpoint do Tailwind para md
+    };
+    
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+    
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
+
   useEffect(() => {
     if (winner) {
       setCanRestart(false);
@@ -44,7 +56,6 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
     }
   }, [winner]);
 
-  // Reseta o flag quando o jogo reinicia
   useEffect(() => {
     if (isGameActive && !winner) {
       setCanRestart(false);
@@ -121,8 +132,10 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
     setTimeout(() => ctx.close(), 600);
   }, []);
 
-  // Enhanced keyboard controls with WASD support
+  // Controles de teclado apenas para desktop
   useEffect(() => {
+    if (isMobile) return; // Não adiciona controles de teclado no mobile
+    
     const handleKeyPress = (event: KeyboardEvent) => {
       const key = event.key.toLowerCase();
       
@@ -161,24 +174,31 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
     };
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [selectedPosition, currentPlayer, isGameActive, winner, canRestart, makeMove, updateSelectedPosition, playMoveSound, resetGame]);
+  }, [selectedPosition, currentPlayer, isGameActive, winner, canRestart, makeMove, updateSelectedPosition, playMoveSound, resetGame, isMobile]);
 
   const handleCellClick = (index: number) => {
-    // Mouse click apenas seleciona a célula, não faz a jogada
-    if (currentPlayer === 'X' && isGameActive && !winner) {
-      updateSelectedPosition(index);
+    if (currentPlayer === 'X' && isGameActive && !winner && board[index] === null) {
+      if (isMobile) {
+        // No mobile, clique direto faz a jogada
+        makeMove(index);
+        playMoveSound();
+      } else {
+        // No desktop, apenas seleciona a célula
+        updateSelectedPosition(index);
+      }
     }
   };
 
   const handleCellHover = (index: number) => {
-    if (currentPlayer === 'X' && isGameActive && !winner) {
+    // Hover apenas funciona no desktop
+    if (!isMobile && currentPlayer === 'X' && isGameActive && !winner) {
       updateSelectedPosition(index);
     }
   };
 
   const getCellClass = (index: number) => {
     const baseClass = "w-20 h-20 bg-gray-800/50 backdrop-blur-sm border-2 border-gray-600 rounded-xl flex items-center justify-center text-3xl font-bold cursor-pointer transition-all duration-300 hover:bg-gray-700/50 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20";
-    const isSelected = index === selectedPosition;
+    const isSelected = !isMobile && index === selectedPosition; // Seleção apenas no desktop
     const selectedClass = isSelected ? "ring-2 ring-yellow-400 ring-opacity-75 bg-yellow-500/10" : "";
     
     if (board[index] === 'X') return `${baseClass} ${selectedClass} text-blue-400 bg-blue-500/20 border-blue-500/40 shadow-lg shadow-blue-500/20`;
@@ -248,12 +268,17 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
             )}
           </div>
 
-          {/* Container fixo para instruções */}
+          {/* Container fixo para instruções - adapta para mobile */}
           <div className="h-6 text-center text-xs text-gray-400 flex items-center justify-center">
             {winner ? (
-              <span>{canRestart ? 'ESPAÇO para reiniciar' : 'Aguarde 1 segundo...'}</span>
+              <span>{canRestart ? (isMobile ? 'Toque "Jogar Novamente"' : 'ESPAÇO para reiniciar') : 'Aguarde 1 segundo...'}</span>
             ) : (
-              <span>Use WASD ou setas para navegar • Mouse para selecionar • ESPAÇO para confirmar</span>
+              <span>
+                {isMobile 
+                  ? 'Toque na célula para jogar' 
+                  : 'Use WASD ou setas para navegar • Mouse para selecionar • ESPAÇO para confirmar'
+                }
+              </span>
             )}
           </div>
 
