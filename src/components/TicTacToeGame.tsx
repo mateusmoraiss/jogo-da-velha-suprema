@@ -15,6 +15,8 @@ interface TicTacToeGameProps {
 }
 
 const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChange }: TicTacToeGameProps) => {
+  const [canRestart, setCanRestart] = useState(false);
+  
   const {
     board,
     currentPlayer,
@@ -31,7 +33,24 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
     updateSelectedPosition
   } = useInfiniteTicTacToe(playerName, difficulty);
 
-  // Modern pleasant sound effect for piece placement
+  // Controla o delay para reiniciar
+  useEffect(() => {
+    if (winner) {
+      setCanRestart(false);
+      const timer = setTimeout(() => {
+        setCanRestart(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [winner]);
+
+  // Reseta o flag quando o jogo reinicia
+  useEffect(() => {
+    if (isGameActive && !winner) {
+      setCanRestart(false);
+    }
+  }, [isGameActive, winner]);
+
   const playMoveSound = useCallback(() => {
     const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
     
@@ -107,8 +126,8 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
     const handleKeyPress = (event: KeyboardEvent) => {
       const key = event.key.toLowerCase();
       
-      // Se o jogo terminou, ESPAÇO reinicia
-      if (key === ' ' && winner) {
+      // Se o jogo terminou, ESPAÇO reinicia (com delay)
+      if (key === ' ' && winner && canRestart) {
         event.preventDefault();
         resetGame();
         return;
@@ -142,9 +161,8 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
     };
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [selectedPosition, currentPlayer, isGameActive, winner, makeMove, updateSelectedPosition, playMoveSound, resetGame]);
+  }, [selectedPosition, currentPlayer, isGameActive, winner, canRestart, makeMove, updateSelectedPosition, playMoveSound, resetGame]);
 
-  // Mouse apenas seleciona, não clica para jogar
   const handleCellClick = (index: number) => {
     // Mouse click apenas seleciona a célula, não faz a jogada
     if (currentPlayer === 'X' && isGameActive && !winner) {
@@ -229,7 +247,7 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
 
           <div className="text-center text-xs text-gray-400">
             {winner ? (
-              <span>ESPAÇO para reiniciar</span>
+              <span>{canRestart ? 'ESPAÇO para reiniciar' : 'Aguarde 1 segundo...'}</span>
             ) : (
               <span>Use WASD ou setas para navegar • Mouse para selecionar • ESPAÇO para confirmar</span>
             )}
