@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,7 +7,7 @@ import { useInfiniteTicTacToe, difficultySettings } from '@/hooks/useInfiniteTic
 import PlayerNameDialog from './PlayerNameDialog';
 import DifficultySelector, { DifficultyLevel } from './DifficultySelector';
 import Tutorial from './Tutorial';
-import { Sparkles, RotateCcw, Settings, Clock, User, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Sparkles, RotateCcw, Settings, Clock, User } from 'lucide-react';
 
 const TicTacToeGame = () => {
   const [playerName, setPlayerName] = useState<string>('');
@@ -32,81 +33,55 @@ const TicTacToeGame = () => {
     updateSelectedPosition
   } = useInfiniteTicTacToe(playerName, selectedDifficulty);
 
-  // Keyboard controls
+  // Keyboard controls - simple navigation
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
-      if (currentPlayer !== 'X' || !isGameActive || winner || showNameDialog || showDifficultySelector || showTutorial) return;
+      if (showNameDialog || showDifficultySelector || showTutorial) return;
 
       const key = event.key;
       let newPosition = selectedPosition;
 
-      // Position mapping based on key combinations
-      const pressedKeys = new Set();
-      if (event.key === 'ArrowUp') pressedKeys.add('up');
-      if (event.key === 'ArrowDown') pressedKeys.add('down');
-      if (event.key === 'ArrowLeft') pressedKeys.add('left');
-      if (event.key === 'ArrowRight') pressedKeys.add('right');
-
-      // Handle movement
-      if (key === 'ArrowUp' || key === 'ArrowDown' || key === 'ArrowLeft' || key === 'ArrowRight') {
+      // Handle arrow key navigation
+      if (key === 'ArrowUp') {
         event.preventDefault();
-        
-        if (key === 'ArrowUp' && key === 'ArrowLeft') newPosition = 0;
-        else if (key === 'ArrowUp' && key === 'ArrowRight') newPosition = 2;
-        else if (key === 'ArrowDown' && key === 'ArrowLeft') newPosition = 6;
-        else if (key === 'ArrowDown' && key === 'ArrowRight') newPosition = 8;
-        else if (key === 'ArrowUp') newPosition = 1;
-        else if (key === 'ArrowDown') newPosition = 7;
-        else if (key === 'ArrowLeft') newPosition = 3;
-        else if (key === 'ArrowRight') newPosition = 5;
-        
+        if (selectedPosition > 2) {
+          newPosition = selectedPosition - 3;
+        }
+      } else if (key === 'ArrowDown') {
+        event.preventDefault();
+        if (selectedPosition < 6) {
+          newPosition = selectedPosition + 3;
+        }
+      } else if (key === 'ArrowLeft') {
+        event.preventDefault();
+        if (selectedPosition % 3 !== 0) {
+          newPosition = selectedPosition - 1;
+        }
+      } else if (key === 'ArrowRight') {
+        event.preventDefault();
+        if (selectedPosition % 3 !== 2) {
+          newPosition = selectedPosition + 1;
+        }
+      }
+      
+      // Update position if changed
+      if (newPosition !== selectedPosition) {
         updateSelectedPosition(newPosition);
       }
       
-      // Handle space for confirming move
-      if (key === ' ') {
+      // Handle space for confirming move (only during player's turn)
+      if (key === ' ' && currentPlayer === 'X' && isGameActive && !winner) {
         event.preventDefault();
         makeMove(selectedPosition);
       }
     };
 
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (currentPlayer !== 'X' || !isGameActive || winner || showNameDialog || showDifficultySelector || showTutorial) return;
-
-      const keys = {
-        up: event.key === 'ArrowUp',
-        down: event.key === 'ArrowDown',
-        left: event.key === 'ArrowLeft',
-        right: event.key === 'ArrowRight'
-      };
-
-      let newPosition = selectedPosition;
-
-      // Check combinations
-      if (keys.up && keys.left) newPosition = 0;
-      else if (keys.up && keys.right) newPosition = 2;
-      else if (keys.down && keys.left) newPosition = 6;
-      else if (keys.down && keys.right) newPosition = 8;
-      else if (keys.up && keys.down) newPosition = 4; // Center
-      else if (keys.up) newPosition = 1;
-      else if (keys.down) newPosition = 7;
-      else if (keys.left) newPosition = 3;
-      else if (keys.right) newPosition = 5;
-
-      if (newPosition !== selectedPosition) {
-        event.preventDefault();
-        updateSelectedPosition(newPosition);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-    window.addEventListener('keypress', handleKeyPress);
+    window.addEventListener('keydown', handleKeyPress);
 
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      window.removeEventListener('keypress', handleKeyPress);
+      window.removeEventListener('keydown', handleKeyPress);
     };
-  }, [currentPlayer, isGameActive, winner, selectedPosition, makeMove, updateSelectedPosition, showNameDialog, showDifficultySelector, showTutorial]);
+  }, [selectedPosition, currentPlayer, isGameActive, winner, makeMove, updateSelectedPosition, showNameDialog, showDifficultySelector, showTutorial]);
 
   const handleNameSubmit = (name: string) => {
     setPlayerName(name);
@@ -121,7 +96,7 @@ const TicTacToeGame = () => {
   };
 
   const handleCellClick = (index: number) => {
-    if (currentPlayer === 'X' && isGameActive) {
+    if (currentPlayer === 'X' && isGameActive && !winner) {
       makeMove(index);
     }
   };
@@ -129,8 +104,8 @@ const TicTacToeGame = () => {
   const getCellClass = (index: number) => {
     const baseClass = "w-20 h-20 bg-gray-800/50 backdrop-blur-sm border-2 border-gray-600 rounded-xl flex items-center justify-center text-3xl font-bold cursor-pointer transition-all duration-300 hover:bg-gray-700/50 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20";
     
-    // Highlight selected position
-    const isSelected = index === selectedPosition && currentPlayer === 'X' && isGameActive && !winner;
+    // Always highlight selected position (even during computer's turn)
+    const isSelected = index === selectedPosition;
     const selectedClass = isSelected ? "ring-2 ring-yellow-400 ring-opacity-75 bg-yellow-500/10" : "";
     
     if (board[index] === 'X') {
@@ -148,9 +123,9 @@ const TicTacToeGame = () => {
       medium: 'text-blue-400',
       hard: 'text-purple-400',
       nightmare: 'text-red-400',
-      armageddon: 'text-orange-400',
       insane: 'text-yellow-400',
-      godlike: 'text-violet-400'
+      godlike: 'text-violet-400',
+      armageddon: 'text-orange-400'
     };
     return colors[difficulty];
   };
@@ -229,11 +204,9 @@ const TicTacToeGame = () => {
           )}
 
           {/* Keyboard Controls Hint */}
-          {currentPlayer === 'X' && isGameActive && !winner && (
-            <div className="text-center text-xs text-gray-400">
-              Use as setas do teclado para navegar • ESPAÇO para confirmar
-            </div>
-          )}
+          <div className="text-center text-xs text-gray-400">
+            Use as setas do teclado para navegar • ESPAÇO para confirmar
+          </div>
 
           <div className="text-center">
             {winner ? (
