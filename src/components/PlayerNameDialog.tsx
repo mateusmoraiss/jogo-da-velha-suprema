@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { BookOpen, Award, Settings, Zap } from 'lucide-react';
+import { BookOpen, Award, Settings } from 'lucide-react';
 
 interface PlayerNameDialogProps {
   onStart: () => void;
@@ -18,7 +19,20 @@ const PlayerNameDialog = ({ onStart, onTutorial, onCredits, onOptions }: PlayerN
           <div className="space-y-2">
             <div className="flex items-center justify-center gap-2 mb-2">
               <span className="text-3xl">👵</span>
-              <Zap className="w-8 h-8 text-yellow-400" />
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                viewBox="-11.5 -10.23174 23 20.46348" 
+                className="w-8 h-8 text-cyan-400 animate-spin"
+                style={{ animationDuration: '20s' }}
+              >
+                <title>React Logo</title>
+                <circle cx="0" cy="0" r="2.05" fill="currentColor"/>
+                <g stroke="currentColor" strokeWidth="1" fill="none">
+                    <ellipse rx="11" ry="4.2"/>
+                    <ellipse rx="11" ry="4.2" transform="rotate(60)"/>
+                    <ellipse rx="11" ry="4.2" transform="rotate(120)"/>
+                </g>
+              </svg>
             </div>
             <CardTitle className="text-2xl font-bold flex items-center justify-center">
               <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
