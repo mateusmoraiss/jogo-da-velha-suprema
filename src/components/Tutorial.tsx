@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -106,30 +105,34 @@ const Tutorial = ({ onClose }: TutorialProps) => {
 
           {/* Controles */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 border-t border-gray-700 pt-6">
-            <div className="space-y-4">
+            <div className="space-y-4 flex flex-col">
               <div className="flex items-center gap-3 text-xl font-semibold text-blue-400">
                 <Keyboard className="w-6 h-6" />
                 <span>Controles do Teclado</span>
               </div>
-              <div className="space-y-2 text-gray-300 text-sm">
-                <p><strong className="text-white">Setas ↑↓←→:</strong> Navegam entre os quadrados</p>
-                <p><strong className="text-white">WASD:</strong> Alternativa às setas (W=cima, A=esquerda, S=baixo, D=direita)</p>
-                <p><strong className="text-white">SHIFT (padrão):</strong> Confirma a jogada na posição selecionada</p>
-                <div className="bg-yellow-900/30 border border-yellow-600/50 p-2 rounded">
+              <div className="text-gray-300 text-sm flex-grow flex flex-col">
+                <div className="flex-grow space-y-2">
+                  <p><strong className="text-white">Setas ↑↓←→:</strong> Navegam entre os quadrados</p>
+                  <p><strong className="text-white">WASD:</strong> Alternativa às setas (W=cima, A=esquerda, S=baixo, D=direita)</p>
+                  <p><strong className="text-white">SHIFT (padrão):</strong> Confirma a jogada na posição selecionada</p>
+                </div>
+                <div className="bg-yellow-900/30 border border-yellow-600/50 p-2 rounded mt-2">
                   <p className="text-yellow-400">⚠️ A tecla de confirmação pode ser alterada nas Opções!</p>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 flex flex-col">
               <div className="flex items-center gap-3 text-xl font-semibold text-cyan-400">
                 <Mouse className="w-6 h-6" />
                 <span>Controles do Mouse</span>
               </div>
-              <div className="space-y-2 text-gray-300 text-sm">
-                <p><strong className="text-white">Hover (passar por cima):</strong> Seleciona automaticamente o quadrado</p>
-                <p>Use a <strong className="text-white">tecla de confirmação</strong> (SHIFT por padrão) após selecionar</p>
-                <div className="bg-blue-900/30 border border-blue-600/50 p-2 rounded">
+              <div className="text-gray-300 text-sm flex-grow flex flex-col">
+                <div className="flex-grow space-y-2">
+                  <p><strong className="text-white">Hover (passar por cima):</strong> Seleciona automaticamente o quadrado</p>
+                  <p>Use a <strong className="text-white">tecla de confirmação</strong> (SHIFT por padrão) após selecionar</p>
+                </div>
+                <div className="bg-blue-900/30 border border-blue-600/50 p-2 rounded mt-2">
                   <p className="text-blue-400">💡 Dica: Combine mouse para seleção rápida + tecla de confirmação!</p>
                 </div>
               </div>
