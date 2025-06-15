@@ -20,7 +20,8 @@ const PlayerNameDialog = ({ onStart, onTutorial, onCredits, onOptions }: PlayerN
             <Gamepad2 className="w-12 h-12 text-blue-400 mb-2" />
           </div>
           <div className="space-y-2">
-            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+            <CardTitle className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent flex items-center justify-center gap-2">
+              <span className="text-3xl">👵</span>
               Velha Suprema
             </CardTitle>
             <p className="text-sm text-gray-400 font-medium">
