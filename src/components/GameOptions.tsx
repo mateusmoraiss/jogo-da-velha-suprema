@@ -3,17 +3,43 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Settings, Keyboard, ArrowLeft } from 'lucide-react';
 import { ConfirmKey, CONFIRM_KEY_OPTIONS } from '@/types/gameTypes';
 
 interface GameOptionsProps {
   confirmKey: ConfirmKey;
+  customKey?: string;
   onConfirmKeyChange: (key: ConfirmKey) => void;
+  onCustomKeyChange?: (key: string) => void;
   onBack: () => void;
   onSave: () => void;
 }
 
-const GameOptions = ({ confirmKey, onConfirmKeyChange, onBack, onSave }: GameOptionsProps) => {
+const GameOptions = ({ 
+  confirmKey, 
+  customKey = '', 
+  onConfirmKeyChange, 
+  onCustomKeyChange, 
+  onBack, 
+  onSave 
+}: GameOptionsProps) => {
+  const [localCustomKey, setLocalCustomKey] = useState(customKey);
+
+  const handleCustomKeyChange = (value: string) => {
+    // Permite apenas um caractere
+    const singleChar = value.slice(-1);
+    setLocalCustomKey(singleChar);
+    if (onCustomKeyChange) {
+      onCustomKeyChange(singleChar);
+    }
+  };
+
+  const handleSave = () => {
+    onSave();
+  };
+
   return (
     <div className="w-full max-w-md mx-auto">
       <Card className="bg-gray-900/90 backdrop-blur-lg border-gray-700/50 shadow-2xl">
@@ -29,10 +55,10 @@ const GameOptions = ({ confirmKey, onConfirmKeyChange, onBack, onSave }: GameOpt
         
         <CardContent className="space-y-6">
           <div className="space-y-2">
-            <label className="text-sm text-gray-300 flex items-center gap-2">
+            <Label className="text-sm text-gray-300 flex items-center gap-2">
               <Keyboard className="w-4 h-4" />
               Tecla para confirmar jogada:
-            </label>
+            </Label>
             <Select value={confirmKey} onValueChange={(value: ConfirmKey) => onConfirmKeyChange(value)}>
               <SelectTrigger className="bg-gray-800/50 border-gray-600 text-white focus:border-blue-400 focus:ring-blue-400">
                 <SelectValue />
@@ -50,6 +76,27 @@ const GameOptions = ({ confirmKey, onConfirmKeyChange, onBack, onSave }: GameOpt
               </SelectContent>
             </Select>
           </div>
+
+          {confirmKey === 'custom' && (
+            <div className="space-y-2">
+              <Label className="text-sm text-gray-300">
+                Digite o caractere personalizado:
+              </Label>
+              <Input
+                type="text"
+                value={localCustomKey}
+                onChange={(e) => handleCustomKeyChange(e.target.value)}
+                placeholder="Digite um caractere"
+                maxLength={1}
+                className="bg-gray-800/50 border-gray-600 text-white focus:border-blue-400 focus:ring-blue-400 text-center text-lg"
+              />
+              {localCustomKey && (
+                <p className="text-xs text-gray-400 text-center">
+                  Tecla selecionada: <span className="text-blue-400 font-mono">"{localCustomKey}"</span>
+                </p>
+              )}
+            </div>
+          )}
           
           <div className="flex gap-2">
             <Button 
@@ -62,7 +109,7 @@ const GameOptions = ({ confirmKey, onConfirmKeyChange, onBack, onSave }: GameOpt
             </Button>
             
             <Button 
-              onClick={onSave}
+              onClick={handleSave}
               className="flex-1 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold transition-all duration-300 transform hover:scale-105"
             >
               Salvar

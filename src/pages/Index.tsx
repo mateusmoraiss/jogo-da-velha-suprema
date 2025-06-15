@@ -14,6 +14,7 @@ const Index = () => {
   const [step, setStep] = useState<GameStep>('menu');
   const [difficulty, setDifficulty] = useState<DifficultyLevel>('medium');
   const [confirmKey, setConfirmKey] = useState<ConfirmKey>('space');
+  const [customKey, setCustomKey] = useState<string>('');
   const [previousStep, setPreviousStep] = useState<GameStep>('menu');
 
   const handleStart = () => {
@@ -68,7 +69,9 @@ const Index = () => {
       case 'options':
         return <GameOptions
           confirmKey={confirmKey}
+          customKey={customKey}
           onConfirmKeyChange={setConfirmKey}
+          onCustomKeyChange={setCustomKey}
           onBack={handleOptionsBack}
           onSave={handleOptionsSave}
         />;
@@ -83,6 +86,7 @@ const Index = () => {
           playerName="Jogador"
           difficulty={difficulty}
           confirmKey={confirmKey}
+          customKey={customKey}
           onDifficultyChange={() => setStep('difficulty')}
           onBackToMenu={() => setStep('menu')}
         />;

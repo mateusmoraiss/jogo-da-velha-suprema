@@ -11,11 +11,12 @@ interface TicTacToeGameProps {
   playerName: string;
   difficulty: DifficultyLevel;
   confirmKey: ConfirmKey;
+  customKey?: string;
   onDifficultyChange: () => void;
   onBackToMenu: () => void;
 }
 
-const TicTacToeGame = ({ playerName, difficulty, confirmKey, onDifficultyChange, onBackToMenu }: TicTacToeGameProps) => {
+const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onDifficultyChange, onBackToMenu }: TicTacToeGameProps) => {
   const [canRestart, setCanRestart] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   
@@ -131,8 +132,14 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, onDifficultyChange,
     
     const handleKeyPress = (event: KeyboardEvent) => {
       const key = event.key.toLowerCase();
-      const confirmKeyOption = CONFIRM_KEY_OPTIONS.find(option => option.value === confirmKey);
-      const confirmKeyCode = confirmKeyOption?.key.toLowerCase() || ' ';
+      
+      let confirmKeyCode = '';
+      if (confirmKey === 'custom') {
+        confirmKeyCode = customKey.toLowerCase();
+      } else {
+        const confirmKeyOption = CONFIRM_KEY_OPTIONS.find(option => option.value === confirmKey);
+        confirmKeyCode = confirmKeyOption?.key.toLowerCase() || ' ';
+      }
       
       if (key === confirmKeyCode && winner && canRestart) {
         event.preventDefault();
@@ -166,7 +173,7 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, onDifficultyChange,
     };
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [selectedPosition, currentPlayer, isGameActive, winner, canRestart, makeMove, updateSelectedPosition, playMoveSound, resetGame, isMobile, confirmKey]);
+  }, [selectedPosition, currentPlayer, isGameActive, winner, canRestart, makeMove, updateSelectedPosition, playMoveSound, resetGame, isMobile, confirmKey, customKey]);
 
   const handleCellClick = (index: number) => {
     if (currentPlayer === 'X' && isGameActive && !winner && board[index] === null) {
@@ -208,6 +215,9 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, onDifficultyChange,
   };
 
   const getConfirmKeyLabel = () => {
+    if (confirmKey === 'custom') {
+      return customKey || 'Personalizado';
+    }
     const keyOption = CONFIRM_KEY_OPTIONS.find(option => option.value === confirmKey);
     return keyOption?.label || 'Espaço';
   };

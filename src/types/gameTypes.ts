@@ -22,7 +22,7 @@ export interface GameState {
 
 export type DifficultyLevel = 'easy' | 'medium' | 'hard' | 'nightmare' | 'insane' | 'godlike' | 'armageddon';
 
-export type ConfirmKey = 'space' | 'enter' | 'shift' | 'ctrl' | 'alt' | 'tab' | 'escape' | 'backspace';
+export type ConfirmKey = 'space' | 'enter' | 'shift' | 'ctrl' | 'alt' | 'tab' | 'escape' | 'backspace' | 'custom';
 
 export const CONFIRM_KEY_OPTIONS: { value: ConfirmKey; label: string; key: string }[] = [
   { value: 'space', label: 'Espaço', key: ' ' },
@@ -32,5 +32,6 @@ export const CONFIRM_KEY_OPTIONS: { value: ConfirmKey; label: string; key: strin
   { value: 'alt', label: 'Alt', key: 'Alt' },
   { value: 'tab', label: 'Tab', key: 'Tab' },
   { value: 'escape', label: 'Esc', key: 'Escape' },
-  { value: 'backspace', label: 'Backspace', key: 'Backspace' }
+  { value: 'backspace', label: 'Backspace', key: 'Backspace' },
+  { value: 'custom', label: 'Personalizado', key: '' }
 ];
