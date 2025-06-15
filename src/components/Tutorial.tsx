@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Zap, Brain, Gamepad2, Award, Github, Mouse, Keyboard, RotateCw } from 'lucide-react';
+import { Zap, Brain, Gamepad2, Award, Github, Mouse, Keyboard, RotateCw, Trophy, ShieldCheck, TrendingUp } from 'lucide-react';
 
 interface TutorialProps {
   onClose: () => void;
@@ -65,6 +65,39 @@ const Tutorial = ({ onClose }: TutorialProps) => {
                   <p><strong className="text-white">🔄 Ciclo Alternado:</strong> O jogo alterna entre remover <strong className="text-yellow-400">3 peças</strong> e <strong className="text-cyan-400">4 peças</strong> de cada jogador quando o tabuleiro fica cheio.</p>
                   <p><strong className="text-white">⚖️ Equilíbrio Estratégico:</strong> Isso garante que nenhum jogador tenha vantagem permanente, criando oportunidades para ambos os lados.</p>
                   <p><strong className="text-white">🎯 Estratégia Adaptativa:</strong> Você precisa ajustar sua estratégia conforme o ciclo muda, mantendo o jogo sempre desafiador!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Mecânicas de Desafio */}
+          <div className="border-t border-gray-700 pt-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 text-2xl font-semibold text-orange-400">
+                <Trophy className="w-8 h-8" />
+                <span>Mecânicas de Desafio</span>
+              </div>
+              <p className="text-gray-300">
+                O jogo registra seus melhores desempenhos na dificuldade atual para você sempre ter um novo recorde para quebrar:
+              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-gray-800/50 p-4 rounded-lg space-y-2">
+                   <div className="flex items-center gap-2 text-lg font-semibold text-red-400">
+                     <ShieldCheck className="w-6 h-6" />
+                     <span>Top Sobrevivência</span>
+                   </div>
+                   <p className="text-gray-300 text-sm">
+                     Aparece quando você <strong className="text-white">perde</strong>. Marca o <strong className="text-white">maior número de jogadas que você sobreviveu</strong>. Desafie-se a durar mais contra a IA!
+                   </p>
+                </div>
+                <div className="bg-gray-800/50 p-4 rounded-lg space-y-2">
+                   <div className="flex items-center gap-2 text-lg font-semibold text-teal-400">
+                     <TrendingUp className="w-6 h-6" />
+                     <span>Top APM</span>
+                   </div>
+                   <p className="text-gray-300 text-sm">
+                     Aparece quando você <strong className="text-white">ganha</strong>. Registra seu <strong className="text-white">maior APM (Ações Por Minuto)</strong>. Desafie-se a vencer cada vez mais rápido!
+                   </p>
                 </div>
               </div>
             </div>
