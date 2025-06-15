@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -113,9 +114,9 @@ const Tutorial = ({ onClose }: TutorialProps) => {
               <div className="space-y-2 text-gray-300 text-sm">
                 <p><strong className="text-white">Setas ↑↓←→:</strong> Navegam entre os quadrados</p>
                 <p><strong className="text-white">WASD:</strong> Alternativa às setas (W=cima, A=esquerda, S=baixo, D=direita)</p>
-                <p><strong className="text-white">SHIFT:</strong> Confirma a jogada na posição selecionada</p>
+                <p><strong className="text-white">SHIFT (padrão):</strong> Confirma a jogada na posição selecionada</p>
                 <div className="bg-yellow-900/30 border border-yellow-600/50 p-2 rounded">
-                  <p className="text-yellow-400">⚠️ Apenas SHIFT faz jogadas! Use WASD/setas para navegar rapidamente!</p>
+                  <p className="text-yellow-400">⚠️ A tecla de confirmação pode ser alterada nas Opções!</p>
                 </div>
               </div>
             </div>
@@ -127,10 +128,9 @@ const Tutorial = ({ onClose }: TutorialProps) => {
               </div>
               <div className="space-y-2 text-gray-300 text-sm">
                 <p><strong className="text-white">Hover (passar por cima):</strong> Seleciona automaticamente o quadrado</p>
-                <p><strong className="text-white">Click:</strong> Apenas seleciona (não joga!)</p>
-                <p>Use <strong className="text-white">SHIFT</strong> para confirmar após selecionar</p>
+                <p>Use a <strong className="text-white">tecla de confirmação</strong> (SHIFT por padrão) após selecionar</p>
                 <div className="bg-blue-900/30 border border-blue-600/50 p-2 rounded">
-                  <p className="text-blue-400">💡 Dica: Combine mouse para seleção rápida + SHIFT para confirmação!</p>
+                  <p className="text-blue-400">💡 Dica: Combine mouse para seleção rápida + tecla de confirmação!</p>
                 </div>
               </div>
             </div>
