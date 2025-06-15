@@ -377,9 +377,9 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
               ))}
             </div>
 
-            <div className="text-center h-32 flex flex-col justify-start">
+            <div className="text-center flex flex-col justify-center py-4 md:py-0 md:h-32">
               <div className="text-sm text-gray-400 mb-2">Estatísticas de Desempenho:</div>
-              <div className="text-sm text-gray-300 flex-1 space-y-3">
+              <div className="text-sm text-gray-300 space-y-3">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="flex items-center justify-center gap-2 bg-gray-800/30 rounded-lg p-3">
                     <Target className="w-4 h-4 text-green-400" />
@@ -410,13 +410,12 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
               </div>
             </div>
 
-            {/* Painel de Recordes agora dentro do fluxo padrão da página */}
             {(survivedMovesRecords.length > 0 || apmRecords.length > 0) && (
               <div className="w-full mt-4">
                 <div className="max-w-4xl mx-auto">
-                  <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8">
+                  <div className="flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
                     {survivedMovesRecords.length > 0 && (
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
                         <div className="flex items-center gap-2">
                           <Trophy className="w-5 h-5 text-green-400" />
                           <span className="text-sm font-semibold text-green-400">Top Sobrevivência:</span>
@@ -433,7 +432,7 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
                     )}
 
                     {apmRecords.length > 0 && (
-                      <div className="flex items-center gap-3">
+                      <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
                         <div className="flex items-center gap-2">
                           <Trophy className="w-5 h-5 text-blue-400" />
                           <span className="text-sm font-semibold text-blue-400">Top APM:</span>
