@@ -243,52 +243,6 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
     }
   };
 
-  const renderRecords = () => {
-    if (!winner) return null;
-
-    if (winner === 'O' && survivedMovesRecords.length > 0) {
-      // Show survived moves records when player lost
-      return (
-        <div className="mt-4 p-4 bg-gray-800/50 rounded-lg border border-gray-600">
-          <div className="flex items-center gap-2 mb-3">
-            <Trophy className="w-5 h-5 text-yellow-400" />
-            <span className="text-lg font-semibold text-yellow-400">Top 3 Recordes de Sobrevivência</span>
-          </div>
-          <div className="space-y-2">
-            {survivedMovesRecords.map((record, index) => (
-              <div key={index} className="flex items-center justify-between bg-gray-700/50 rounded-lg px-3 py-2">
-                <span className="text-gray-300">#{index + 1}</span>
-                <span className="text-green-400 font-bold">{record} jogadas</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-    }
-
-    if (winner === 'X' && apmRecords.length > 0) {
-      // Show APM records when player won
-      return (
-        <div className="mt-4 p-4 bg-gray-800/50 rounded-lg border border-gray-600">
-          <div className="flex items-center gap-2 mb-3">
-            <Trophy className="w-5 h-5 text-yellow-400" />
-            <span className="text-lg font-semibold text-yellow-400">Top 3 Recordes de APM</span>
-          </div>
-          <div className="space-y-2">
-            {apmRecords.map((record, index) => (
-              <div key={index} className="flex items-center justify-between bg-gray-700/50 rounded-lg px-3 py-2">
-                <span className="text-gray-300">#{index + 1}</span>
-                <span className="text-blue-400 font-bold">{record} APM</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      );
-    }
-
-    return null;
-  };
-
   const handleBackToMenu = () => {
     clearRecords();
     onBackToMenu();
@@ -300,165 +254,208 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
-      <Card className="bg-gray-900/80 backdrop-blur-lg border-gray-700/50 shadow-2xl">
-        <CardHeader className="text-center space-y-4">
-          <div className="flex items-center justify-center gap-2">
-            <Sparkles className="w-6 h-6 text-yellow-400" />
-            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-              Velha Suprema
-            </CardTitle>
-            <Sparkles className="w-6 h-6 text-yellow-400" />
-          </div>
-          
-          <div className="flex items-center justify-between">
-            <div className="text-center">
-              <Badge variant="outline" className="bg-blue-500/20 text-blue-400 border-blue-500/40 px-4 py-2 text-lg">
-                {playerName}: {playerScore}
-              </Badge>
+    <>
+      <div className="w-full max-w-2xl mx-auto mb-20">
+        <Card className="bg-gray-900/80 backdrop-blur-lg border-gray-700/50 shadow-2xl">
+          <CardHeader className="text-center space-y-4">
+            <div className="flex items-center justify-center gap-2">
+              <Sparkles className="w-6 h-6 text-yellow-400" />
+              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                Velha Suprema
+              </CardTitle>
+              <Sparkles className="w-6 h-6 text-yellow-400" />
             </div>
-            <div className="flex flex-col items-center">
-              <Badge variant="outline" className={`${getDifficultyColor()} bg-gray-800/50 border-gray-600 px-3 py-1 text-sm`}>
-                {difficultyName.toUpperCase()}
-              </Badge>
-            </div>
-            <div className="text-center">
-              <Badge variant="outline" className="bg-cyan-500/20 text-cyan-400 border-cyan-500/40 px-4 py-2 text-lg">
-                Computador: {computerScore}
-              </Badge>
-            </div>
-          </div>
-
-          <div className="h-16 flex flex-col justify-center">
-            {currentPlayer === 'X' && isGameActive && !winner && (
-              <div className="space-y-2">
-                <div className="flex items-center justify-center gap-2 text-white/80">
-                  <Clock className="w-4 h-4" />
-                  <span className="text-sm font-medium">
-                    Tempo: {timeLeft.toFixed(1)}s
-                  </span>
-                </div>
-                <div className="w-full bg-gray-700 rounded-full h-2">
-                  <div 
-                    className={`h-2 rounded-full transition-all duration-100 ${getTimeBarColor()}`}
-                    style={{ width: `${(timeLeft / difficultySettings[difficulty].time) * 100}%` }}
-                  />
-                </div>
+            
+            <div className="flex items-center justify-between">
+              <div className="text-center">
+                <Badge variant="outline" className="bg-blue-500/20 text-blue-400 border-blue-500/40 px-4 py-2 text-lg">
+                  {playerName}: {playerScore}
+                </Badge>
               </div>
-            )}
-          </div>
-
-          <div className="h-6 text-center text-xs text-gray-400 flex items-center justify-center">
-            {winner ? (
-              <span>{canRestart ? (isMobile ? 'Toque "Jogar Novamente"' : `${getConfirmKeyLabel()} para reiniciar`) : 'Aguarde 1 segundo...'}</span>
-            ) : (
-              <span>
-                {isMobile 
-                  ? 'Toque na célula para jogar' 
-                  : `Use WASD ou setas para navegar • Mouse para selecionar • ${getConfirmKeyLabel()} para confirmar`
-                }
-              </span>
-            )}
-          </div>
-
-          <div className={winner ? "h-auto" : "h-20"}>
-            {winner ? (
-              <div className="space-y-4">
-                <div className="text-xl font-bold text-yellow-400">
-                  {getWinnerMessage()}
-                </div>
-                
-                {renderRecords()}
-                
-                <div className="flex gap-2 justify-center flex-wrap">
-                  <Button 
-                    onClick={resetGame}
-                    className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold px-4 py-2 rounded-lg"
-                  >
-                    <RotateCcw className="w-4 h-4 mr-2" />
-                    Jogar Novamente
-                  </Button>
-                  <Button 
-                    onClick={handleDifficultyChange}
-                    variant="outline"
-                    className="bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50 px-4 py-2"
-                  >
-                    <Settings className="w-4 h-4 mr-2" />
-                    Mudar Nível
-                  </Button>
-                  <Button 
-                    onClick={handleBackToMenu}
-                    variant="outline"
-                    className="bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50 px-4 py-2"
-                  >
-                    <Home className="w-4 h-4 mr-2" />
-                    Voltar ao Início
-                  </Button>
-                </div>
+              <div className="flex flex-col items-center">
+                <Badge variant="outline" className={`${getDifficultyColor()} bg-gray-800/50 border-gray-600 px-3 py-1 text-sm`}>
+                  {difficultyName.toUpperCase()}
+                </Badge>
               </div>
-            ) : (
-              <div className="text-xl font-semibold text-gray-200 text-center flex flex-col justify-center h-20">
-                Vez de: <span className={currentPlayer === 'X' ? 'text-blue-400' : 'text-cyan-400'}>
-                  {currentPlayer === 'X' ? playerName : 'Computador'}
+              <div className="text-center">
+                <Badge variant="outline" className="bg-cyan-500/20 text-cyan-400 border-cyan-500/40 px-4 py-2 text-lg">
+                  Computador: {computerScore}
+                </Badge>
+              </div>
+            </div>
+
+            <div className="h-16 flex flex-col justify-center">
+              {currentPlayer === 'X' && isGameActive && !winner && (
+                <div className="space-y-2">
+                  <div className="flex items-center justify-center gap-2 text-white/80">
+                    <Clock className="w-4 h-4" />
+                    <span className="text-sm font-medium">
+                      Tempo: {timeLeft.toFixed(1)}s
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className={`h-2 rounded-full transition-all duration-100 ${getTimeBarColor()}`}
+                      style={{ width: `${(timeLeft / difficultySettings[difficulty].time) * 100}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="h-6 text-center text-xs text-gray-400 flex items-center justify-center">
+              {winner ? (
+                <span>{canRestart ? (isMobile ? 'Toque "Jogar Novamente"' : `${getConfirmKeyLabel()} para reiniciar`) : 'Aguarde 1 segundo...'}</span>
+              ) : (
+                <span>
+                  {isMobile 
+                    ? 'Toque na célula para jogar' 
+                    : `Use WASD ou setas para navegar • Mouse para selecionar • ${getConfirmKeyLabel()} para confirmar`
+                  }
                 </span>
-              </div>
-            )}
-          </div>
-        </CardHeader>
+              )}
+            </div>
 
-        <CardContent className="space-y-6">
-          <div className="grid grid-cols-3 gap-3 mx-auto w-fit">
-            {board.map((cell, index) => (
-              <div
-                key={index}
-                className={getCellClass(index)}
-                onClick={() => handleCellClick(index)}
-                onMouseEnter={() => handleCellHover(index)}
-              >
-                {cell && (
-                  <span className="animate-scale-in">
-                    {cell}
+            <div className={winner ? "h-auto" : "h-20"}>
+              {winner ? (
+                <div className="space-y-4">
+                  <div className="text-xl font-bold text-yellow-400">
+                    {getWinnerMessage()}
+                  </div>
+                  
+                  <div className="flex gap-2 justify-center flex-wrap">
+                    <Button 
+                      onClick={resetGame}
+                      className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold px-4 py-2 rounded-lg"
+                    >
+                      <RotateCcw className="w-4 h-4 mr-2" />
+                      Jogar Novamente
+                    </Button>
+                    <Button 
+                      onClick={handleDifficultyChange}
+                      variant="outline"
+                      className="bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50 px-4 py-2"
+                    >
+                      <Settings className="w-4 h-4 mr-2" />
+                      Mudar Nível
+                    </Button>
+                    <Button 
+                      onClick={handleBackToMenu}
+                      variant="outline"
+                      className="bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50 px-4 py-2"
+                    >
+                      <Home className="w-4 h-4 mr-2" />
+                      Voltar ao Início
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-xl font-semibold text-gray-200 text-center flex flex-col justify-center h-20">
+                  Vez de: <span className={currentPlayer === 'X' ? 'text-blue-400' : 'text-cyan-400'}>
+                    {currentPlayer === 'X' ? playerName : 'Computador'}
                   </span>
-                )}
-              </div>
-            ))}
-          </div>
+                </div>
+              )}
+            </div>
+          </CardHeader>
 
-          <div className="text-center h-32 flex flex-col justify-start">
-            <div className="text-sm text-gray-400 mb-2">Estatísticas de Desempenho:</div>
-            <div className="text-sm text-gray-300 flex-1 space-y-3">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="flex items-center justify-center gap-2 bg-gray-800/30 rounded-lg p-3">
-                  <Target className="w-4 h-4 text-green-400" />
-                  <div className="text-center">
-                    <div className="text-lg font-bold text-green-400">{survivedMoves}</div>
-                    <div className="text-xs text-gray-400">Jogadas Sobrevividas</div>
-                  </div>
+          <CardContent className="space-y-6">
+            <div className="grid grid-cols-3 gap-3 mx-auto w-fit">
+              {board.map((cell, index) => (
+                <div
+                  key={index}
+                  className={getCellClass(index)}
+                  onClick={() => handleCellClick(index)}
+                  onMouseEnter={() => handleCellHover(index)}
+                >
+                  {cell && (
+                    <span className="animate-scale-in">
+                      {cell}
+                    </span>
+                  )}
                 </div>
-                
-                <div className="flex items-center justify-center gap-2 bg-gray-800/30 rounded-lg p-3">
-                  <Zap className="w-4 h-4 text-blue-400" />
-                  <div className="text-center">
-                    <div className="text-lg font-bold text-blue-400">{averageAPM}</div>
-                    <div className="text-xs text-gray-400">APM Médio</div>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-center gap-2 bg-gray-800/30 rounded-lg p-3">
-                  <Clock className="w-4 h-4 text-purple-400" />
-                  <div className="text-center">
-                    <div className="text-lg font-bold text-purple-400">
-                      {averageMoveTime > 0 ? (averageMoveTime / 1000).toFixed(1) : '0.0'}s
+              ))}
+            </div>
+
+            <div className="text-center h-32 flex flex-col justify-start">
+              <div className="text-sm text-gray-400 mb-2">Estatísticas de Desempenho:</div>
+              <div className="text-sm text-gray-300 flex-1 space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="flex items-center justify-center gap-2 bg-gray-800/30 rounded-lg p-3">
+                    <Target className="w-4 h-4 text-green-400" />
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-green-400">{survivedMoves}</div>
+                      <div className="text-xs text-gray-400">Jogadas Sobrevividas</div>
                     </div>
-                    <div className="text-xs text-gray-400">Tempo Médio/Jogada</div>
+                  </div>
+                  
+                  <div className="flex items-center justify-center gap-2 bg-gray-800/30 rounded-lg p-3">
+                    <Zap className="w-4 h-4 text-blue-400" />
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-blue-400">{averageAPM}</div>
+                      <div className="text-xs text-gray-400">APM Médio</div>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center justify-center gap-2 bg-gray-800/30 rounded-lg p-3">
+                    <Clock className="w-4 h-4 text-purple-400" />
+                    <div className="text-center">
+                      <div className="text-lg font-bold text-purple-400">
+                        {averageMoveTime > 0 ? (averageMoveTime / 1000).toFixed(1) : '0.0'}s
+                      </div>
+                      <div className="text-xs text-gray-400">Tempo Médio/Jogada</div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Fixed Bottom Records Panel */}
+      {(survivedMovesRecords.length > 0 || apmRecords.length > 0) && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 bg-gray-900/95 backdrop-blur-lg border-t border-gray-700 p-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="flex items-center justify-center gap-8">
+              {survivedMovesRecords.length > 0 && (
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Trophy className="w-5 h-5 text-green-400" />
+                    <span className="text-sm font-semibold text-green-400">Top Sobrevivência:</span>
+                  </div>
+                  <div className="flex gap-2">
+                    {survivedMovesRecords.map((record, index) => (
+                      <div key={index} className="bg-gray-800/50 rounded-lg px-3 py-1 border border-gray-600">
+                        <span className="text-xs text-gray-400">#{index + 1}</span>
+                        <span className="text-sm text-green-400 font-bold ml-2">{record}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {apmRecords.length > 0 && (
+                <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-2">
+                    <Trophy className="w-5 h-5 text-blue-400" />
+                    <span className="text-sm font-semibold text-blue-400">Top APM:</span>
+                  </div>
+                  <div className="flex gap-2">
+                    {apmRecords.map((record, index) => (
+                      <div key={index} className="bg-gray-800/50 rounded-lg px-3 py-1 border border-gray-600">
+                        <span className="text-xs text-gray-400">#{index + 1}</span>
+                        <span className="text-sm text-blue-400 font-bold ml-2">{record}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </div>
+      )}
+    </>
   );
 };
 
