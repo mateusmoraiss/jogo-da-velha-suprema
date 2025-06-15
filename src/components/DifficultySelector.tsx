@@ -94,12 +94,12 @@ const DifficultySelector = ({ onSelect, onBack, onTutorial }: DifficultySelector
     <div className="w-full max-w-4xl mx-auto">
       <Card className="bg-gray-900/90 backdrop-blur-lg border-gray-700/50 shadow-2xl">
         <CardHeader className="text-center space-y-4">
-          <CardTitle className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
             Escolha a Dificuldade
           </CardTitle>
           <p className="text-gray-300">Teste suas habilidades contra diferentes níveis de IA</p>
           
-          <div className="flex gap-2 justify-center flex-wrap">
+          <div className="flex gap-2 justify-center">
             <Button 
               onClick={() => handleClick(onTutorial)}
               variant="outline"
@@ -125,12 +125,12 @@ const DifficultySelector = ({ onSelect, onBack, onTutorial }: DifficultySelector
                 <Button
                   key={difficulty.id}
                   onClick={() => handleSelect(difficulty.id)}
-                  className={`h-auto p-4 md:p-6 flex flex-col items-center space-y-3 ${difficulty.bgColor} hover:scale-105 transition-all duration-300 border-2 hover:border-opacity-60 group`}
+                  className={`h-auto p-6 flex flex-col items-center space-y-3 ${difficulty.bgColor} hover:scale-105 transition-all duration-300 border-2 hover:border-opacity-60 group`}
                   variant="outline"
                 >
-                  <IconComponent className="w-7 h-7 md:w-8 md:h-8 text-gray-300 group-hover:text-white transition-colors" />
+                  <IconComponent className="w-8 h-8 text-gray-300 group-hover:text-white transition-colors" />
                   <div className="text-center">
-                    <div className={`text-lg md:text-xl font-bold bg-gradient-to-r ${difficulty.color} bg-clip-text text-transparent`}>
+                    <div className={`text-xl font-bold bg-gradient-to-r ${difficulty.color} bg-clip-text text-transparent`}>
                       {difficulty.name}
                     </div>
                     <Badge variant="outline" className="mt-2 text-xs bg-gray-800/50 text-gray-300 border-gray-600">
@@ -149,4 +149,3 @@ const DifficultySelector = ({ onSelect, onBack, onTutorial }: DifficultySelector
 };
 
 export default DifficultySelector;
-
