@@ -19,7 +19,7 @@ export const difficulties = [
     name: 'Divino',
     icon: Shield,
     time: 10,
-    description: 'Tempo de sobra para cada jogada. Ideal para aprender.',
+    description: 'Ideal para iniciantes.',
     color: 'from-green-600 to-green-400',
     bgColor: 'bg-green-500/10 border-green-500/30'
   },
@@ -28,7 +28,7 @@ export const difficulties = [
     name: 'Muito Fácil',
     icon: Target,
     time: 7,
-    description: 'Tempo confortável para planejar seus movimentos.',
+    description: 'Tempo confortável.',
     color: 'from-blue-600 to-blue-400',
     bgColor: 'bg-blue-500/10 border-blue-500/30'
   },
@@ -37,43 +37,43 @@ export const difficulties = [
     name: 'Fácil',
     icon: Brain,
     time: 5,
-    description: 'O tempo é um fator. Pense rápido!',
+    description: 'Pense rápido!',
     color: 'from-purple-600 to-purple-400',
     bgColor: 'bg-purple-500/10 border-purple-500/30'
   },
   {
     id: 'nightmare' as DifficultyLevel,
     name: 'Médio',
-    icon: Skull,
+    icon: Sword,
     time: 3.5,
-    description: 'A pressão do tempo aumenta. Mantenha o foco.',
-    color: 'from-red-600 to-red-400',
-    bgColor: 'bg-red-500/10 border-red-500/30'
+    description: 'Pressão crescente.',
+    color: 'from-violet-600 to-pink-600',
+    bgColor: 'bg-violet-500/10 border-violet-500/30'
   },
   {
     id: 'insane' as DifficultyLevel,
     name: 'Difícil',
     icon: Zap,
     time: 2,
-    description: 'Pouquíssimo tempo. Exige jogadas quase instantâneas.',
+    description: 'Reflexos rápidos.',
     color: 'from-yellow-600 to-orange-600',
     bgColor: 'bg-yellow-500/10 border-yellow-500/30'
   },
   {
     id: 'godlike' as DifficultyLevel,
     name: 'Pesadelo',
-    icon: Sword,
+    icon: Skull,
     time: 1.2,
-    description: 'Tempo quase nulo. Apenas para os mais rápidos.',
-    color: 'from-violet-600 to-pink-600',
-    bgColor: 'bg-violet-500/10 border-violet-500/30'
+    description: 'Quase impossível.',
+    color: 'from-red-600 to-red-400',
+    bgColor: 'bg-red-500/10 border-red-500/30'
   },
   {
     id: 'armageddon' as DifficultyLevel,
     name: 'Armagedon',
     icon: Flame,
     time: 0.6,
-    description: '💀 IMPOSSÍVEL - 0.6s de terror puro',
+    description: '💀 Terror puro.',
     color: 'from-red-700 via-orange-600 to-yellow-500',
     bgColor: 'bg-gradient-to-r from-red-500/20 to-orange-500/20 border-red-600/50 shadow-lg shadow-red-500/20'
   }
