@@ -19,7 +19,13 @@ const PlayerNameDialog = ({ onStart, onTutorial, onCredits, onOptions }: PlayerN
           <div className="space-y-2">
             <div className="flex items-center justify-center gap-2 mb-2">
               <span className="text-3xl">👵</span>
-              <span className="text-2xl">🔫</span>
+              <svg className="w-8 h-8 text-cyan-400" viewBox="0 0 24 24" fill="currentColor">
+                <circle cx="12" cy="12" r="2.5"/>
+                <path d="m7.5 4.27-.71.71a11.23 11.23 0 0 0 0 13.52l.71.71-.71.71a12.68 12.68 0 0 1 0-15.65l.71.71z"/>
+                <path d="m16.5 19.73.71-.71a11.23 11.23 0 0 0 0-13.52l-.71-.71.71-.71a12.68 12.68 0 0 1 0 15.65l-.71-.71z"/>
+                <path d="m9.27 16.5.71-.71a11.23 11.23 0 0 0 0-13.52l-.71-.71-.71.71a12.68 12.68 0 0 1 0 15.65l.71-.71z"/>
+                <path d="m14.73 7.5-.71.71a11.23 11.23 0 0 0 0 13.52l.71.71.71-.71a12.68 12.68 0 0 1 0-15.65l-.71.71z"/>
+              </svg>
             </div>
             <CardTitle className="text-2xl font-bold flex items-center justify-center">
               <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
