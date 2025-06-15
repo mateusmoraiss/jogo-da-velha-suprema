@@ -151,7 +151,7 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
         confirmKeyCode = customKey.toLowerCase();
       } else {
         const confirmKeyOption = CONFIRM_KEY_OPTIONS.find(option => option.value === confirmKey);
-        confirmKeyCode = confirmKeyOption?.key.toLowerCase() || ' ';
+        confirmKeyCode = confirmKeyOption?.key.toLowerCase() || 'shift';
       }
       
       if (key === confirmKeyCode && winner && canRestart) {
@@ -232,7 +232,7 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
       return customKey || 'Personalizado';
     }
     const keyOption = CONFIRM_KEY_OPTIONS.find(option => option.value === confirmKey);
-    return keyOption?.label || 'Espaço';
+    return keyOption?.label || 'Shift';
   };
 
   const getWinnerMessage = () => {

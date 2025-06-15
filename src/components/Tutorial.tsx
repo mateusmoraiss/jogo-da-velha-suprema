@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -46,7 +45,7 @@ const Tutorial = ({ onClose }: TutorialProps) => {
               <div className="space-y-3 text-gray-300">
                  <p>O jogo é <strong className="text-white">infinito</strong>. Quando o tabuleiro encher, as peças mais antigas de cada jogador são removidas automaticamente.</p>
                  <p>O tempo é seu inimigo. Se o cronômetro zerar, você perde a vez automaticamente.</p>
-                 <p>Apenas <strong className="text-white">ESPAÇO</strong> confirma jogadas - mouse e teclas apenas selecionam!</p>
+                 <p>Apenas <strong className="text-white">SHIFT</strong> confirma jogadas - mouse e teclas apenas selecionam!</p>
               </div>
             </div>
           </div>
@@ -81,9 +80,9 @@ const Tutorial = ({ onClose }: TutorialProps) => {
               <div className="space-y-2 text-gray-300 text-sm">
                 <p><strong className="text-white">Setas ↑↓←→:</strong> Navegam entre os quadrados</p>
                 <p><strong className="text-white">WASD:</strong> Alternativa às setas (W=cima, A=esquerda, S=baixo, D=direita)</p>
-                <p><strong className="text-white">ESPAÇO:</strong> Confirma a jogada na posição selecionada</p>
+                <p><strong className="text-white">SHIFT:</strong> Confirma a jogada na posição selecionada</p>
                 <div className="bg-yellow-900/30 border border-yellow-600/50 p-2 rounded">
-                  <p className="text-yellow-400">⚠️ Apenas ESPAÇO faz jogadas! Use WASD/setas para navegar rapidamente!</p>
+                  <p className="text-yellow-400">⚠️ Apenas SHIFT faz jogadas! Use WASD/setas para navegar rapidamente!</p>
                 </div>
               </div>
             </div>
@@ -96,9 +95,9 @@ const Tutorial = ({ onClose }: TutorialProps) => {
               <div className="space-y-2 text-gray-300 text-sm">
                 <p><strong className="text-white">Hover (passar por cima):</strong> Seleciona automaticamente o quadrado</p>
                 <p><strong className="text-white">Click:</strong> Apenas seleciona (não joga!)</p>
-                <p>Use <strong className="text-white">ESPAÇO</strong> para confirmar após selecionar</p>
+                <p>Use <strong className="text-white">SHIFT</strong> para confirmar após selecionar</p>
                 <div className="bg-blue-900/30 border border-blue-600/50 p-2 rounded">
-                  <p className="text-blue-400">💡 Dica: Combine mouse para seleção rápida + ESPAÇO para confirmação!</p>
+                  <p className="text-blue-400">💡 Dica: Combine mouse para seleção rápida + SHIFT para confirmação!</p>
                 </div>
               </div>
             </div>

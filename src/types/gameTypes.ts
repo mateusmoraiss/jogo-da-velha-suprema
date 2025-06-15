@@ -1,4 +1,3 @@
-
 export type Player = 'X' | 'O' | null;
 export type Board = Player[];
 
@@ -22,10 +21,9 @@ export interface GameState {
 
 export type DifficultyLevel = 'easy' | 'medium' | 'hard' | 'nightmare' | 'insane' | 'godlike' | 'armageddon';
 
-export type ConfirmKey = 'space' | 'enter' | 'shift' | 'ctrl' | 'alt' | 'tab' | 'escape' | 'backspace' | 'custom';
+export type ConfirmKey = 'enter' | 'shift' | 'ctrl' | 'alt' | 'tab' | 'escape' | 'backspace' | 'custom';
 
 export const CONFIRM_KEY_OPTIONS: { value: ConfirmKey; label: string; key: string }[] = [
-  { value: 'space', label: 'Espaço', key: ' ' },
   { value: 'enter', label: 'Enter', key: 'Enter' },
   { value: 'shift', label: 'Shift', key: 'Shift' },
   { value: 'ctrl', label: 'Ctrl', key: 'Control' },

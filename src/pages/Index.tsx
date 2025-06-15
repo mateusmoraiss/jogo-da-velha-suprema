@@ -13,7 +13,7 @@ type GameStep = 'menu' | 'options' | 'difficulty' | 'playing' | 'tutorial' | 'cr
 const Index = () => {
   const [step, setStep] = useState<GameStep>('menu');
   const [difficulty, setDifficulty] = useState<DifficultyLevel>('medium');
-  const [confirmKey, setConfirmKey] = useState<ConfirmKey>('space');
+  const [confirmKey, setConfirmKey] = useState<ConfirmKey>('shift');
   const [customKey, setCustomKey] = useState<string>('');
   const [previousStep, setPreviousStep] = useState<GameStep>('menu');
 
