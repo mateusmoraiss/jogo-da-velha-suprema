@@ -316,7 +316,7 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
               )}
             </div>
 
-            <div className={winner ? "h-auto" : "h-20"}>
+            <div className="min-h-[5rem] flex flex-col justify-center items-center py-4">
               {winner ? (
                 <div className="space-y-4">
                   <div className="text-xl font-bold text-yellow-400">
@@ -350,7 +350,7 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
                   </div>
                 </div>
               ) : (
-                <div className="text-xl font-semibold text-gray-200 text-center flex flex-col justify-center h-20">
+                <div className="text-xl font-semibold text-gray-200 text-center">
                   Vez de: <span className={currentPlayer === 'X' ? 'text-blue-400' : 'text-cyan-400'}>
                     {currentPlayer === 'X' ? playerName : 'Computador'}
                   </span>
