@@ -19,7 +19,7 @@ export const difficulties = [
     name: 'Divino',
     icon: Shield,
     time: 10,
-    description: 'IA básica, muito tempo',
+    description: 'Tempo de sobra para cada jogada. Ideal para aprender.',
     color: 'from-green-600 to-green-400',
     bgColor: 'bg-green-500/10 border-green-500/30'
   },
@@ -28,7 +28,7 @@ export const difficulties = [
     name: 'Muito Fácil',
     icon: Target,
     time: 7,
-    description: 'IA moderada, tempo razoável',
+    description: 'Tempo confortável para planejar seus movimentos.',
     color: 'from-blue-600 to-blue-400',
     bgColor: 'bg-blue-500/10 border-blue-500/30'
   },
@@ -37,7 +37,7 @@ export const difficulties = [
     name: 'Fácil',
     icon: Brain,
     time: 5,
-    description: 'IA inteligente, tempo limitado',
+    description: 'O tempo é um fator. Pense rápido!',
     color: 'from-purple-600 to-purple-400',
     bgColor: 'bg-purple-500/10 border-purple-500/30'
   },
@@ -46,7 +46,7 @@ export const difficulties = [
     name: 'Médio',
     icon: Skull,
     time: 3.5,
-    description: 'IA esperta, o tempo começa a apertar.',
+    description: 'A pressão do tempo aumenta. Mantenha o foco.',
     color: 'from-red-600 to-red-400',
     bgColor: 'bg-red-500/10 border-red-500/30'
   },
@@ -55,7 +55,7 @@ export const difficulties = [
     name: 'Difícil',
     icon: Zap,
     time: 2,
-    description: 'IA muito esperta, pressão extrema.',
+    description: 'Pouquíssimo tempo. Exige jogadas quase instantâneas.',
     color: 'from-yellow-600 to-orange-600',
     bgColor: 'bg-yellow-500/10 border-yellow-500/30'
   },
@@ -64,7 +64,7 @@ export const difficulties = [
     name: 'Pesadelo',
     icon: Sword,
     time: 1.2,
-    description: 'IA quase perfeita, reflexos ninjas exigidos.',
+    description: 'Tempo quase nulo. Apenas para os mais rápidos.',
     color: 'from-violet-600 to-pink-600',
     bgColor: 'bg-violet-500/10 border-violet-500/30'
   },
