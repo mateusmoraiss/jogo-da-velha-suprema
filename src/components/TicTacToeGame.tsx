@@ -409,52 +409,52 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
                 </div>
               </div>
             </div>
+
+            {/* Painel de Recordes agora dentro do fluxo padrão da página */}
+            {(survivedMovesRecords.length > 0 || apmRecords.length > 0) && (
+              <div className="w-full mt-4">
+                <div className="max-w-4xl mx-auto">
+                  <div className="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8">
+                    {survivedMovesRecords.length > 0 && (
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
+                          <Trophy className="w-5 h-5 text-green-400" />
+                          <span className="text-sm font-semibold text-green-400">Top Sobrevivência:</span>
+                        </div>
+                        <div className="flex gap-2">
+                          {survivedMovesRecords.map((record, index) => (
+                            <div key={index} className="bg-gray-800/50 rounded-lg px-3 py-1 border border-gray-600">
+                              <span className="text-xs text-gray-400">#{index + 1}</span>
+                              <span className="text-sm text-green-400 font-bold ml-2">{record}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {apmRecords.length > 0 && (
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
+                          <Trophy className="w-5 h-5 text-blue-400" />
+                          <span className="text-sm font-semibold text-blue-400">Top APM:</span>
+                        </div>
+                        <div className="flex gap-2">
+                          {apmRecords.map((record, index) => (
+                            <div key={index} className="bg-gray-800/50 rounded-lg px-3 py-1 border border-gray-600">
+                              <span className="text-xs text-gray-400">#{index + 1}</span>
+                              <span className="text-sm text-blue-400 font-bold ml-2">{record}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
-
-      {/* Fixed Bottom Records Panel */}
-      {(survivedMovesRecords.length > 0 || apmRecords.length > 0) && (
-        <div className="fixed bottom-0 left-0 right-0 z-50 bg-gray-900/95 backdrop-blur-lg border-t border-gray-700 p-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="flex items-center justify-center gap-8">
-              {survivedMovesRecords.length > 0 && (
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Trophy className="w-5 h-5 text-green-400" />
-                    <span className="text-sm font-semibold text-green-400">Top Sobrevivência:</span>
-                  </div>
-                  <div className="flex gap-2">
-                    {survivedMovesRecords.map((record, index) => (
-                      <div key={index} className="bg-gray-800/50 rounded-lg px-3 py-1 border border-gray-600">
-                        <span className="text-xs text-gray-400">#{index + 1}</span>
-                        <span className="text-sm text-green-400 font-bold ml-2">{record}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-              
-              {apmRecords.length > 0 && (
-                <div className="flex items-center gap-4">
-                  <div className="flex items-center gap-2">
-                    <Trophy className="w-5 h-5 text-blue-400" />
-                    <span className="text-sm font-semibold text-blue-400">Top APM:</span>
-                  </div>
-                  <div className="flex gap-2">
-                    {apmRecords.map((record, index) => (
-                      <div key={index} className="bg-gray-800/50 rounded-lg px-3 py-1 border border-gray-600">
-                        <span className="text-xs text-gray-400">#{index + 1}</span>
-                        <span className="text-sm text-blue-400 font-bold ml-2">{record}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </>
   );
 };
