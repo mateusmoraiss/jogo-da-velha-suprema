@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import TicTacToeGame from "@/components/TicTacToeGame";
 import PlayerNameDialog from "@/components/PlayerNameDialog";
@@ -7,6 +6,7 @@ import DifficultySelector from "@/components/DifficultySelector";
 import Tutorial from "@/components/Tutorial";
 import Credits from "@/components/Credits";
 import { DifficultyLevel, ConfirmKey } from "@/types/gameTypes";
+import { playClickSound } from "@/utils/soundUtils";
 
 type GameStep = 'menu' | 'options' | 'difficulty' | 'playing' | 'tutorial' | 'credits';
 
@@ -18,44 +18,63 @@ const Index = () => {
   const [previousStep, setPreviousStep] = useState<GameStep>('menu');
 
   const handleStart = () => {
+    playClickSound();
     setStep('difficulty');
   };
 
   const handleOptions = () => {
+    playClickSound();
     setPreviousStep(step);
     setStep('options');
   };
 
   const handleDifficultySelect = (selectedDifficulty: DifficultyLevel) => {
+    playClickSound();
     setDifficulty(selectedDifficulty);
     setStep('playing');
   };
 
   const handleShowTutorial = () => {
+    playClickSound();
     setPreviousStep(step);
     setStep('tutorial');
   };
 
   const handleShowCredits = () => {
+    playClickSound();
     setPreviousStep(step);
     setStep('credits');
   };
 
   const handleCloseTutorial = () => {
+    playClickSound();
     setStep(previousStep);
   }
 
   const handleCloseCredits = () => {
+    playClickSound();
     setStep(previousStep);
   }
 
   const handleOptionsBack = () => {
+    playClickSound();
     setStep(previousStep);
   }
 
   const handleOptionsSave = () => {
+    playClickSound();
     setStep(previousStep);
   }
+
+  const onBackToMenu = () => {
+    playClickSound();
+    setStep('menu');
+  };
+
+  const onDifficultyChange = () => {
+    playClickSound();
+    setStep('difficulty');
+  };
 
   const renderStep = () => {
     switch (step) {
@@ -87,8 +106,8 @@ const Index = () => {
           difficulty={difficulty}
           confirmKey={confirmKey}
           customKey={customKey}
-          onDifficultyChange={() => setStep('difficulty')}
-          onBackToMenu={() => setStep('menu')}
+          onDifficultyChange={onDifficultyChange}
+          onBackToMenu={onBackToMenu}
         />;
       case 'tutorial':
         return <Tutorial onClose={handleCloseTutorial} />;

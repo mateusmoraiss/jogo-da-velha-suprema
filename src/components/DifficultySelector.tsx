@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Zap, Brain, Skull, Flame, Target, Shield, Sword } from 'lucide-react';
+import { playClickSound } from '@/utils/soundUtils';
 
 export type DifficultyLevel = 'easy' | 'medium' | 'hard' | 'nightmare' | 'insane' | 'godlike' | 'armageddon';
 
@@ -80,6 +81,16 @@ const difficulties = [
 ];
 
 const DifficultySelector = ({ onSelect, onBack, onTutorial }: DifficultySelectorProps) => {
+  const handleClick = (callback: () => void) => {
+    playClickSound();
+    callback();
+  };
+
+  const handleSelect = (difficulty: DifficultyLevel) => {
+    playClickSound();
+    onSelect(difficulty);
+  };
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       <Card className="bg-gray-900/90 backdrop-blur-lg border-gray-700/50 shadow-2xl">
@@ -91,14 +102,14 @@ const DifficultySelector = ({ onSelect, onBack, onTutorial }: DifficultySelector
           
           <div className="flex gap-2 justify-center">
             <Button 
-              onClick={onTutorial}
+              onClick={() => handleClick(onTutorial)}
               variant="outline"
               className="bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20"
             >
               📖 Tutorial
             </Button>
             <Button 
-              onClick={onBack}
+              onClick={() => handleClick(onBack)}
               variant="outline"
               className="bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50"
             >
@@ -114,7 +125,7 @@ const DifficultySelector = ({ onSelect, onBack, onTutorial }: DifficultySelector
               return (
                 <Button
                   key={difficulty.id}
-                  onClick={() => onSelect(difficulty.id)}
+                  onClick={() => handleSelect(difficulty.id)}
                   className={`h-auto p-6 flex flex-col items-center space-y-3 ${difficulty.bgColor} hover:scale-105 transition-all duration-300 border-2 hover:border-opacity-60 group`}
                   variant="outline"
                 >
