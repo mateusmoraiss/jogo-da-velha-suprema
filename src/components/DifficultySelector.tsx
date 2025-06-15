@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -45,7 +46,7 @@ export const difficulties = [
     name: 'Médio',
     icon: Skull,
     time: 3.5,
-    description: 'IA muito esperta, pressão extrema',
+    description: 'IA esperta, o tempo começa a apertar.',
     color: 'from-red-600 to-red-400',
     bgColor: 'bg-red-500/10 border-red-500/30'
   },
@@ -54,7 +55,7 @@ export const difficulties = [
     name: 'Difícil',
     icon: Zap,
     time: 2,
-    description: 'IA quase perfeita, reflexos ninjas',
+    description: 'IA muito esperta, pressão extrema.',
     color: 'from-yellow-600 to-orange-600',
     bgColor: 'bg-yellow-500/10 border-yellow-500/30'
   },
@@ -63,7 +64,7 @@ export const difficulties = [
     name: 'Pesadelo',
     icon: Sword,
     time: 1.2,
-    description: 'IA infernal, reflexos sobre-humanos',
+    description: 'IA quase perfeita, reflexos ninjas exigidos.',
     color: 'from-violet-600 to-pink-600',
     bgColor: 'bg-violet-500/10 border-violet-500/30'
   },
