@@ -18,30 +18,25 @@ const Index = () => {
   const [previousStep, setPreviousStep] = useState<GameStep>('menu');
 
   const handleStart = () => {
-    playClickSound();
     setStep('difficulty');
   };
 
   const handleOptions = () => {
-    playClickSound();
     setPreviousStep(step);
     setStep('options');
   };
 
   const handleDifficultySelect = (selectedDifficulty: DifficultyLevel) => {
-    playClickSound();
     setDifficulty(selectedDifficulty);
     setStep('playing');
   };
 
   const handleShowTutorial = () => {
-    playClickSound();
     setPreviousStep(step);
     setStep('tutorial');
   };
 
   const handleShowCredits = () => {
-    playClickSound();
     setPreviousStep(step);
     setStep('credits');
   };
@@ -57,12 +52,10 @@ const Index = () => {
   }
 
   const handleOptionsBack = () => {
-    playClickSound();
     setStep(previousStep);
   }
 
   const handleOptionsSave = () => {
-    playClickSound();
     setStep(previousStep);
   }
 
