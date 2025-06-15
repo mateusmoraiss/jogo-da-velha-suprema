@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -18,7 +19,7 @@ const PlayerNameDialog = ({ onStart, onTutorial, onCredits, onOptions }: PlayerN
           <div className="space-y-2">
             <div className="flex items-center justify-center gap-2 mb-2">
               <span className="text-3xl">👵</span>
-              <span className="text-2xl text-cyan-400">⚛️</span>
+              <span className="text-2xl">🔫</span>
             </div>
             <CardTitle className="text-2xl font-bold flex items-center justify-center">
               <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
