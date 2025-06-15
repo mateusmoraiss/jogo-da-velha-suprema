@@ -5,17 +5,17 @@ import { Badge } from '@/components/ui/badge';
 import { useInfiniteTicTacToe } from '@/hooks/useInfiniteTicTacToe';
 import { difficultySettings } from '@/constants/difficultySettings';
 import { DifficultyLevel, ConfirmKey, CONFIRM_KEY_OPTIONS } from '@/types/gameTypes';
-import { Sparkles, RotateCcw, Settings, Clock, User, Target, Zap } from 'lucide-react';
+import { Sparkles, RotateCcw, Settings, Clock, User, Target, Zap, Home } from 'lucide-react';
 
 interface TicTacToeGameProps {
   playerName: string;
   difficulty: DifficultyLevel;
   confirmKey: ConfirmKey;
   onDifficultyChange: () => void;
-  onNameChange: () => void;
+  onBackToMenu: () => void;
 }
 
-const TicTacToeGame = ({ playerName, difficulty, confirmKey, onDifficultyChange, onNameChange }: TicTacToeGameProps) => {
+const TicTacToeGame = ({ playerName, difficulty, confirmKey, onDifficultyChange, onBackToMenu }: TicTacToeGameProps) => {
   const [canRestart, setCanRestart] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   
@@ -305,12 +305,12 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, onDifficultyChange,
                     Mudar Nível
                   </Button>
                   <Button 
-                    onClick={onNameChange}
+                    onClick={onBackToMenu}
                     variant="outline"
                     className="bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50 px-4 py-2"
                   >
-                    <User className="w-4 h-4 mr-2" />
-                    Trocar Nome
+                    <Home className="w-4 h-4 mr-2" />
+                    Voltar ao Início
                   </Button>
                 </div>
               </div>

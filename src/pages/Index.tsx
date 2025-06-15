@@ -84,7 +84,7 @@ const Index = () => {
           difficulty={difficulty}
           confirmKey={confirmKey}
           onDifficultyChange={() => setStep('difficulty')}
-          onNameChange={() => setStep('menu')}
+          onBackToMenu={() => setStep('menu')}
         />;
       case 'tutorial':
         return <Tutorial onClose={handleCloseTutorial} />;
