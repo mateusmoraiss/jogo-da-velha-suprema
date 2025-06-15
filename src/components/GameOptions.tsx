@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Settings, Keyboard, ArrowLeft } from 'lucide-react';
 import { ConfirmKey, CONFIRM_KEY_OPTIONS } from '@/types/gameTypes';
+import { playClickSound } from '@/utils/soundUtils';
 
 interface GameOptionsProps {
   confirmKey: ConfirmKey;
@@ -37,8 +38,19 @@ const GameOptions = ({
   };
 
   const handleSave = () => {
+    playClickSound();
     onSave();
   };
+  
+  const handleBack = () => {
+    playClickSound();
+    onBack();
+  };
+
+  const handleConfirmKeyChange = (value: ConfirmKey) => {
+    playClickSound();
+    onConfirmKeyChange(value);
+  }
 
   return (
     <div className="w-full max-w-md mx-auto">
@@ -59,7 +71,7 @@ const GameOptions = ({
               <Keyboard className="w-4 h-4" />
               Tecla para confirmar jogada:
             </Label>
-            <Select value={confirmKey} onValueChange={(value: ConfirmKey) => onConfirmKeyChange(value)}>
+            <Select value={confirmKey} onValueChange={handleConfirmKeyChange}>
               <SelectTrigger className="bg-gray-800/50 border-gray-600 text-white focus:border-blue-400 focus:ring-blue-400">
                 <SelectValue />
               </SelectTrigger>
@@ -100,7 +112,7 @@ const GameOptions = ({
           
           <div className="flex gap-2">
             <Button 
-              onClick={onBack}
+              onClick={handleBack}
               variant="outline"
               className="flex-1 bg-gray-800/30 border-gray-600 text-gray-300 hover:bg-gray-700/50"
             >

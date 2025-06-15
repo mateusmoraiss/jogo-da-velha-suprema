@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, Award, Settings } from 'lucide-react';
+import { playClickSound } from '@/utils/soundUtils';
 
 interface PlayerNameDialogProps {
   onStart: () => void;
@@ -12,6 +13,12 @@ interface PlayerNameDialogProps {
 }
 
 const PlayerNameDialog = ({ onStart, onTutorial, onCredits, onOptions }: PlayerNameDialogProps) => {
+
+  const handleClick = (callback: () => void) => {
+    playClickSound();
+    callback();
+  };
+
   return (
     <div className="w-full max-w-md mx-auto">
       <Card className="bg-gray-900/90 backdrop-blur-lg border-gray-700/50 shadow-2xl">
@@ -48,14 +55,14 @@ const PlayerNameDialog = ({ onStart, onTutorial, onCredits, onOptions }: PlayerN
         
         <CardContent className="space-y-4">
           <Button 
-            onClick={onStart}
+            onClick={() => handleClick(onStart)}
             className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white font-semibold py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
           >
             Começar Jogo
           </Button>
           
           <Button 
-            onClick={onOptions}
+            onClick={() => handleClick(onOptions)}
             variant="outline"
             className="w-full bg-gray-800/30 border-gray-600 text-gray-300 hover:bg-gray-700/50 py-2"
           >
@@ -64,7 +71,7 @@ const PlayerNameDialog = ({ onStart, onTutorial, onCredits, onOptions }: PlayerN
           </Button>
           
           <Button 
-            onClick={onTutorial}
+            onClick={() => handleClick(onTutorial)}
             variant="outline"
             className="w-full bg-gray-800/30 border-gray-600 text-gray-300 hover:bg-gray-700/50 py-2"
           >
@@ -73,7 +80,7 @@ const PlayerNameDialog = ({ onStart, onTutorial, onCredits, onOptions }: PlayerN
           </Button>
 
           <Button 
-            onClick={onCredits}
+            onClick={() => handleClick(onCredits)}
             variant="outline"
             className="w-full bg-gray-800/30 border-gray-600 text-gray-300 hover:bg-gray-700/50 py-2"
           >
