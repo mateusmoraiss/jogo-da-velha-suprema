@@ -3,21 +3,24 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { User, Gamepad2, BookOpen, Award } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { User, Gamepad2, BookOpen, Award, Keyboard } from 'lucide-react';
+import { ConfirmKey, CONFIRM_KEY_OPTIONS } from '@/types/gameTypes';
 
 interface PlayerNameDialogProps {
-  onSubmit: (name: string) => void;
+  onSubmit: (name: string, confirmKey: ConfirmKey) => void;
   onTutorial: () => void;
   onCredits: () => void;
 }
 
 const PlayerNameDialog = ({ onSubmit, onTutorial, onCredits }: PlayerNameDialogProps) => {
   const [name, setName] = useState('');
+  const [confirmKey, setConfirmKey] = useState<ConfirmKey>('space');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      onSubmit(name.trim());
+      onSubmit(name.trim(), confirmKey);
     }
   };
 
@@ -36,7 +39,7 @@ const PlayerNameDialog = ({ onSubmit, onTutorial, onCredits }: PlayerNameDialogP
               Criado por <span className="text-gray-300">Mateus Morais</span>
             </p>
           </div>
-          <p className="text-gray-300">Digite seu nome para começar!</p>
+          <p className="text-gray-300">Digite seu nome e configure os controles!</p>
         </CardHeader>
         
         <CardContent className="space-y-4">
@@ -51,6 +54,29 @@ const PlayerNameDialog = ({ onSubmit, onTutorial, onCredits }: PlayerNameDialogP
                 className="pl-10 bg-gray-800/50 border-gray-600 text-white placeholder:text-gray-400 focus:border-blue-400 focus:ring-blue-400"
                 autoFocus
               />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm text-gray-300 flex items-center gap-2">
+                <Keyboard className="w-4 h-4" />
+                Tecla para confirmar jogada:
+              </label>
+              <Select value={confirmKey} onValueChange={(value: ConfirmKey) => setConfirmKey(value)}>
+                <SelectTrigger className="bg-gray-800/50 border-gray-600 text-white focus:border-blue-400 focus:ring-blue-400">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-800 border-gray-600">
+                  {CONFIRM_KEY_OPTIONS.map((option) => (
+                    <SelectItem 
+                      key={option.value} 
+                      value={option.value}
+                      className="text-white hover:bg-gray-700 focus:bg-gray-700"
+                    >
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             
             <Button 

@@ -4,17 +4,18 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useInfiniteTicTacToe } from '@/hooks/useInfiniteTicTacToe';
 import { difficultySettings } from '@/constants/difficultySettings';
-import { DifficultyLevel } from '@/types/gameTypes';
+import { DifficultyLevel, ConfirmKey, CONFIRM_KEY_OPTIONS } from '@/types/gameTypes';
 import { Sparkles, RotateCcw, Settings, Clock, User, Target, Zap } from 'lucide-react';
 
 interface TicTacToeGameProps {
   playerName: string;
   difficulty: DifficultyLevel;
+  confirmKey: ConfirmKey;
   onDifficultyChange: () => void;
   onNameChange: () => void;
 }
 
-const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChange }: TicTacToeGameProps) => {
+const TicTacToeGame = ({ playerName, difficulty, confirmKey, onDifficultyChange, onNameChange }: TicTacToeGameProps) => {
   const [canRestart, setCanRestart] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   
@@ -130,8 +131,10 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
     
     const handleKeyPress = (event: KeyboardEvent) => {
       const key = event.key.toLowerCase();
+      const confirmKeyOption = CONFIRM_KEY_OPTIONS.find(option => option.value === confirmKey);
+      const confirmKeyCode = confirmKeyOption?.key.toLowerCase() || ' ';
       
-      if (key === ' ' && winner && canRestart) {
+      if (key === confirmKeyCode && winner && canRestart) {
         event.preventDefault();
         resetGame();
         return;
@@ -154,7 +157,7 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
           updateSelectedPosition(newPosition);
         }
         
-        if (key === ' ' && currentPlayer === 'X') {
+        if (key === confirmKeyCode && currentPlayer === 'X') {
           event.preventDefault();
           makeMove(selectedPosition);
           playMoveSound();
@@ -163,7 +166,7 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
     };
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
-  }, [selectedPosition, currentPlayer, isGameActive, winner, canRestart, makeMove, updateSelectedPosition, playMoveSound, resetGame, isMobile]);
+  }, [selectedPosition, currentPlayer, isGameActive, winner, canRestart, makeMove, updateSelectedPosition, playMoveSound, resetGame, isMobile, confirmKey]);
 
   const handleCellClick = (index: number) => {
     if (currentPlayer === 'X' && isGameActive && !winner && board[index] === null) {
@@ -202,6 +205,11 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
     if (timeLeft > 3) return 'bg-gradient-to-r from-green-500 to-blue-500';
     if (timeLeft > 1) return 'bg-gradient-to-r from-yellow-500 to-orange-500';
     return 'bg-gradient-to-r from-red-500 to-pink-500';
+  };
+
+  const getConfirmKeyLabel = () => {
+    const keyOption = CONFIRM_KEY_OPTIONS.find(option => option.value === confirmKey);
+    return keyOption?.label || 'Espaço';
   };
 
   return (
@@ -255,12 +263,12 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
 
           <div className="h-6 text-center text-xs text-gray-400 flex items-center justify-center">
             {winner ? (
-              <span>{canRestart ? (isMobile ? 'Toque "Jogar Novamente"' : 'ESPAÇO para reiniciar') : 'Aguarde 1 segundo...'}</span>
+              <span>{canRestart ? (isMobile ? 'Toque "Jogar Novamente"' : `${getConfirmKeyLabel()} para reiniciar`) : 'Aguarde 1 segundo...'}</span>
             ) : (
               <span>
                 {isMobile 
                   ? 'Toque na célula para jogar' 
-                  : 'Use WASD ou setas para navegar • Mouse para selecionar • ESPAÇO para confirmar'
+                  : `Use WASD ou setas para navegar • Mouse para selecionar • ${getConfirmKeyLabel()} para confirmar`
                 }
               </span>
             )}

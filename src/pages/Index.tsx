@@ -5,7 +5,7 @@ import PlayerNameDialog from "@/components/PlayerNameDialog";
 import DifficultySelector from "@/components/DifficultySelector";
 import Tutorial from "@/components/Tutorial";
 import Credits from "@/components/Credits";
-import { DifficultyLevel } from "@/types/gameTypes";
+import { DifficultyLevel, ConfirmKey } from "@/types/gameTypes";
 
 type GameStep = 'name' | 'difficulty' | 'playing' | 'tutorial' | 'credits';
 
@@ -13,10 +13,12 @@ const Index = () => {
   const [step, setStep] = useState<GameStep>('name');
   const [playerName, setPlayerName] = useState<string>('');
   const [difficulty, setDifficulty] = useState<DifficultyLevel>('medium');
+  const [confirmKey, setConfirmKey] = useState<ConfirmKey>('space');
   const [previousStep, setPreviousStep] = useState<GameStep>('name');
 
-  const handleNameSubmit = (name: string) => {
+  const handleNameSubmit = (name: string, selectedConfirmKey: ConfirmKey) => {
     setPlayerName(name);
+    setConfirmKey(selectedConfirmKey);
     setStep('difficulty');
   };
 
@@ -61,6 +63,7 @@ const Index = () => {
         return <TicTacToeGame 
           playerName={playerName} 
           difficulty={difficulty}
+          confirmKey={confirmKey}
           onDifficultyChange={() => setStep('difficulty')}
           onNameChange={() => setStep('name')}
         />;
