@@ -316,9 +316,9 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
               )}
             </div>
 
-            <div className="min-h-[5rem] flex flex-col justify-center items-center py-4">
+            <div className="h-32 flex flex-col justify-center items-center py-4">
               {winner ? (
-                <div className="space-y-4">
+                <div className="space-y-4 text-center">
                   <div className="text-xl font-bold text-yellow-400">
                     {getWinnerMessage()}
                   </div>
