@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from 'react';
 import { GameState, DifficultyLevel, Player } from '@/types/gameTypes';
 import { difficultySettings } from '@/constants/difficultySettings';
@@ -24,12 +25,33 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
   const [pieceOrder, setPieceOrder] = useState<{ position: number; player: Player }[]>([]);
   const [removalCycle, setRemovalCycle] = useState<3 | 4>(3);
   const [moveStartTime, setMoveStartTime] = useState<number>(Date.now());
+  
+  // Records state for current difficulty session
+  const [survivedMovesRecords, setSurvivedMovesRecords] = useState<number[]>([]);
+  const [apmRecords, setApmRecords] = useState<number[]>([]);
 
   const calculateAPM = useCallback((moveTimes: number[]) => {
     if (moveTimes.length === 0) return 0;
     const totalSeconds = moveTimes.reduce((sum, time) => sum + time, 0) / 1000;
     const minutes = totalSeconds / 60;
     return minutes > 0 ? Math.round(moveTimes.length / minutes) : 0;
+  }, []);
+
+  // Update records when game ends
+  const updateRecords = useCallback((winner: Player, survivedMoves: number, apm: number) => {
+    if (winner === 'O') {
+      // Player lost, update survived moves records
+      setSurvivedMovesRecords(prev => {
+        const newRecords = [...prev, survivedMoves].sort((a, b) => b - a).slice(0, 3);
+        return newRecords;
+      });
+    } else if (winner === 'X') {
+      // Player won, update APM records
+      setApmRecords(prev => {
+        const newRecords = [...prev, apm].sort((a, b) => b - a).slice(0, 3);
+        return newRecords;
+      });
+    }
   }, []);
 
   const makeMove = useCallback((index: number) => {
@@ -50,30 +72,24 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     newBoard[index] = currentPlayer;
     currentPieceOrder.push({ position: index, player: currentPlayer });
 
-    // 2. Verifica se o tabuleiro está cheio para remover as peças mais antigas
     const isBoardFull = !newBoard.includes(null);
 
     if (isBoardFull) {
-      // Identifica as peças mais antigas de cada jogador baseado no ciclo atual
       const playerXPieces = currentPieceOrder.filter(p => p.player === 'X');
       const piecesToRemoveX = playerXPieces.slice(0, removalCycle);
       
       const playerOPieces = currentPieceOrder.filter(p => p.player === 'O');
       const piecesToRemoveO = playerOPieces.slice(0, removalCycle);
 
-      // Combina todas as peças a serem removidas
       const allPiecesToRemove = [...piecesToRemoveX, ...piecesToRemoveO];
       const positionsToRemove = allPiecesToRemove.map(p => p.position);
 
-      // 3. Remove as peças do tabuleiro
       positionsToRemove.forEach(pos => {
         newBoard[pos] = null;
       });
       
-      // 4. Atualiza o histórico de ordem das peças
       currentPieceOrder = currentPieceOrder.filter(p => !positionsToRemove.includes(p.position));
 
-      // 5. Alterna o ciclo de remoção para a próxima vez
       setRemovalCycle(prev => prev === 3 ? 4 : 3);
     }
     
@@ -88,11 +104,15 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     } else if (winner === 'O') {
       newComputerScore++;
     } else if (currentPlayer === 'X') {
-      // Jogador sobreviveu mais uma jogada
       newSurvivedMoves++;
     }
 
     const newAverageAPM = calculateAPM(newMoveTimes);
+
+    // Update records if game ended
+    if (winner) {
+      updateRecords(winner, newSurvivedMoves, newAverageAPM);
+    }
 
     setPieceOrder(currentPieceOrder);
     setGameState(prevState => ({
@@ -111,9 +131,8 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       averageAPM: newAverageAPM
     }));
     
-    // Reset timer for next move
     setMoveStartTime(Date.now());
-  }, [gameState, pieceOrder, removalCycle, moveStartTime, calculateAPM]);
+  }, [gameState, pieceOrder, removalCycle, moveStartTime, calculateAPM, updateRecords]);
 
   const updateSelectedPosition = useCallback((newPosition: number) => {
     setGameState(prev => ({
@@ -182,6 +201,10 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
   }, []);
 
   const changeDifficulty = useCallback((newDifficulty: DifficultyLevel) => {
+    // Clear records when changing difficulty
+    setSurvivedMovesRecords([]);
+    setApmRecords([]);
+    
     setGameState(prevState => ({
       ...prevState,
       difficulty: newDifficulty,
@@ -202,6 +225,12 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     setMoveStartTime(Date.now());
   }, []);
 
+  // Clear records when component unmounts or difficulty changes
+  const clearRecords = useCallback(() => {
+    setSurvivedMovesRecords([]);
+    setApmRecords([]);
+  }, []);
+
   return {
     board: gameState.board,
     currentPlayer: gameState.currentPlayer,
@@ -215,9 +244,12 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     survivedMoves: gameState.survivedMoves,
     averageAPM: gameState.averageAPM,
     averageMoveTime: gameState.moveTimes.length > 0 ? gameState.totalMoveTime / gameState.moveTimes.length : 0,
+    survivedMovesRecords,
+    apmRecords,
     makeMove,
     resetGame,
     changeDifficulty,
-    updateSelectedPosition
+    updateSelectedPosition,
+    clearRecords
   };
 };

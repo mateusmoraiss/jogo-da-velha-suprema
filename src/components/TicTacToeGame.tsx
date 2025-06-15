@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { useInfiniteTicTacToe } from '@/hooks/useInfiniteTicTacToe';
 import { difficultySettings } from '@/constants/difficultySettings';
 import { DifficultyLevel, ConfirmKey, CONFIRM_KEY_OPTIONS } from '@/types/gameTypes';
-import { Sparkles, RotateCcw, Settings, Clock, User, Target, Zap, Home } from 'lucide-react';
+import { Sparkles, RotateCcw, Settings, Clock, User, Target, Zap, Home, Trophy } from 'lucide-react';
 import { difficulties } from './DifficultySelector';
 
 interface TicTacToeGameProps {
@@ -33,13 +33,23 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
     survivedMoves,
     averageAPM,
     averageMoveTime,
+    survivedMovesRecords,
+    apmRecords,
     makeMove,
     resetGame,
     changeDifficulty,
-    updateSelectedPosition
+    updateSelectedPosition,
+    clearRecords
   } = useInfiniteTicTacToe(playerName, difficulty);
 
   const difficultyName = difficulties.find(d => d.id === difficulty)?.name || difficulty;
+
+  // Clear records when leaving the game
+  useEffect(() => {
+    return () => {
+      clearRecords();
+    };
+  }, [clearRecords]);
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -233,6 +243,62 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
     }
   };
 
+  const renderRecords = () => {
+    if (!winner) return null;
+
+    if (winner === 'O' && survivedMovesRecords.length > 0) {
+      // Show survived moves records when player lost
+      return (
+        <div className="mt-4 p-4 bg-gray-800/50 rounded-lg border border-gray-600">
+          <div className="flex items-center gap-2 mb-3">
+            <Trophy className="w-5 h-5 text-yellow-400" />
+            <span className="text-lg font-semibold text-yellow-400">Top 3 Recordes de Sobrevivência</span>
+          </div>
+          <div className="space-y-2">
+            {survivedMovesRecords.map((record, index) => (
+              <div key={index} className="flex items-center justify-between bg-gray-700/50 rounded-lg px-3 py-2">
+                <span className="text-gray-300">#{index + 1}</span>
+                <span className="text-green-400 font-bold">{record} jogadas</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (winner === 'X' && apmRecords.length > 0) {
+      // Show APM records when player won
+      return (
+        <div className="mt-4 p-4 bg-gray-800/50 rounded-lg border border-gray-600">
+          <div className="flex items-center gap-2 mb-3">
+            <Trophy className="w-5 h-5 text-yellow-400" />
+            <span className="text-lg font-semibold text-yellow-400">Top 3 Recordes de APM</span>
+          </div>
+          <div className="space-y-2">
+            {apmRecords.map((record, index) => (
+              <div key={index} className="flex items-center justify-between bg-gray-700/50 rounded-lg px-3 py-2">
+                <span className="text-gray-300">#{index + 1}</span>
+                <span className="text-blue-400 font-bold">{record} APM</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  const handleBackToMenu = () => {
+    clearRecords();
+    onBackToMenu();
+  };
+
+  const handleDifficultyChange = () => {
+    clearRecords();
+    onDifficultyChange();
+  };
+
   return (
     <div className="w-full max-w-2xl mx-auto">
       <Card className="bg-gray-900/80 backdrop-blur-lg border-gray-700/50 shadow-2xl">
@@ -295,12 +361,15 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
             )}
           </div>
 
-          <div className="h-20 text-center flex flex-col justify-center">
+          <div className={winner ? "h-auto" : "h-20"}>
             {winner ? (
               <div className="space-y-4">
                 <div className="text-xl font-bold text-yellow-400">
                   {getWinnerMessage()}
                 </div>
+                
+                {renderRecords()}
+                
                 <div className="flex gap-2 justify-center flex-wrap">
                   <Button 
                     onClick={resetGame}
@@ -310,7 +379,7 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
                     Jogar Novamente
                   </Button>
                   <Button 
-                    onClick={onDifficultyChange}
+                    onClick={handleDifficultyChange}
                     variant="outline"
                     className="bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50 px-4 py-2"
                   >
@@ -318,7 +387,7 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
                     Mudar Nível
                   </Button>
                   <Button 
-                    onClick={onBackToMenu}
+                    onClick={handleBackToMenu}
                     variant="outline"
                     className="bg-gray-800/50 border-gray-600 text-gray-300 hover:bg-gray-700/50 px-4 py-2"
                   >
@@ -328,7 +397,7 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
                 </div>
               </div>
             ) : (
-              <div className="text-xl font-semibold text-gray-200">
+              <div className="text-xl font-semibold text-gray-200 text-center flex flex-col justify-center h-20">
                 Vez de: <span className={currentPlayer === 'X' ? 'text-blue-400' : 'text-cyan-400'}>
                   {currentPlayer === 'X' ? playerName : 'Computador'}
                 </span>
