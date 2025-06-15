@@ -6,6 +6,7 @@ import { useInfiniteTicTacToe } from '@/hooks/useInfiniteTicTacToe';
 import { difficultySettings } from '@/constants/difficultySettings';
 import { DifficultyLevel, ConfirmKey, CONFIRM_KEY_OPTIONS } from '@/types/gameTypes';
 import { Sparkles, RotateCcw, Settings, Clock, User, Target, Zap, Home } from 'lucide-react';
+import { difficulties } from './DifficultySelector';
 
 interface TicTacToeGameProps {
   playerName: string;
@@ -37,6 +38,8 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
     changeDifficulty,
     updateSelectedPosition
   } = useInfiniteTicTacToe(playerName, difficulty);
+
+  const difficultyName = difficulties.find(d => d.id === difficulty)?.name || difficulty;
 
   useEffect(() => {
     const checkIsMobile = () => {
@@ -250,7 +253,7 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
             </div>
             <div className="flex flex-col items-center">
               <Badge variant="outline" className={`${getDifficultyColor()} bg-gray-800/50 border-gray-600 px-3 py-1 text-sm`}>
-                {difficulty.toUpperCase()}
+                {difficultyName.toUpperCase()}
               </Badge>
             </div>
             <div className="text-center">

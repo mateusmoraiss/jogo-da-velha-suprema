@@ -1,12 +1,10 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Zap, Brain, Skull, Flame, Target, Shield, Sword } from 'lucide-react';
 import { playClickSound } from '@/utils/soundUtils';
-
-export type DifficultyLevel = 'easy' | 'medium' | 'hard' | 'nightmare' | 'insane' | 'godlike' | 'armageddon';
+import { DifficultyLevel } from '@/types/gameTypes';
 
 interface DifficultySelectorProps {
   onSelect: (difficulty: DifficultyLevel) => void;
@@ -14,10 +12,10 @@ interface DifficultySelectorProps {
   onTutorial: () => void;
 }
 
-const difficulties = [
+export const difficulties = [
   {
     id: 'easy' as DifficultyLevel,
-    name: 'Fácil',
+    name: 'Divino',
     icon: Shield,
     time: 10,
     description: 'IA básica, muito tempo',
@@ -26,7 +24,7 @@ const difficulties = [
   },
   {
     id: 'medium' as DifficultyLevel,
-    name: 'Médio',
+    name: 'Muito Fácil',
     icon: Target,
     time: 7,
     description: 'IA moderada, tempo razoável',
@@ -35,7 +33,7 @@ const difficulties = [
   },
   {
     id: 'hard' as DifficultyLevel,
-    name: 'Difícil',
+    name: 'Fácil',
     icon: Brain,
     time: 5,
     description: 'IA inteligente, tempo limitado',
@@ -44,7 +42,7 @@ const difficulties = [
   },
   {
     id: 'nightmare' as DifficultyLevel,
-    name: 'Pesadelo',
+    name: 'Médio',
     icon: Skull,
     time: 3.5,
     description: 'IA muito esperta, pressão extrema',
@@ -53,7 +51,7 @@ const difficulties = [
   },
   {
     id: 'insane' as DifficultyLevel,
-    name: 'Insano',
+    name: 'Difícil',
     icon: Zap,
     time: 2,
     description: 'IA quase perfeita, reflexos ninjas',
@@ -62,10 +60,10 @@ const difficulties = [
   },
   {
     id: 'godlike' as DifficultyLevel,
-    name: 'Divino',
+    name: 'Pesadelo',
     icon: Sword,
     time: 1.2,
-    description: 'Para os deuses do jogo',
+    description: 'IA infernal, reflexos sobre-humanos',
     color: 'from-violet-600 to-pink-600',
     bgColor: 'bg-violet-500/10 border-violet-500/30'
   },
