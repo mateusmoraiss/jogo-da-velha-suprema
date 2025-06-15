@@ -9,11 +9,15 @@ export interface GameState {
   isGameActive: boolean;
   playerScore: number;
   computerScore: number;
-  moveHistory: string[];
   moveCount: number;
   timeLeft: number;
   difficulty: DifficultyLevel;
   selectedPosition: number;
+  // New statistics fields
+  survivedMoves: number;
+  totalMoveTime: number;
+  moveTimes: number[];
+  averageAPM: number;
 }
 
 export type DifficultyLevel = 'easy' | 'medium' | 'hard' | 'nightmare' | 'insane' | 'godlike' | 'armageddon';

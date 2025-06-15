@@ -12,19 +12,35 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     isGameActive: true,
     playerScore: 0,
     computerScore: 0,
-    moveHistory: [],
     moveCount: 0,
     timeLeft: difficultySettings[difficulty].time,
     difficulty,
-    selectedPosition: 4
+    selectedPosition: 4,
+    survivedMoves: 0,
+    totalMoveTime: 0,
+    moveTimes: [],
+    averageAPM: 0
   });
   const [pieceOrder, setPieceOrder] = useState<{ position: number; player: Player }[]>([]);
-  const [removalCycle, setRemovalCycle] = useState<3 | 4>(3); // Alterna entre 3 e 4
+  const [removalCycle, setRemovalCycle] = useState<3 | 4>(3);
+  const [moveStartTime, setMoveStartTime] = useState<number>(Date.now());
+
+  const calculateAPM = useCallback((moveTimes: number[]) => {
+    if (moveTimes.length === 0) return 0;
+    const totalSeconds = moveTimes.reduce((sum, time) => sum + time, 0) / 1000;
+    const minutes = totalSeconds / 60;
+    return minutes > 0 ? Math.round(moveTimes.length / minutes) : 0;
+  }, []);
 
   const makeMove = useCallback((index: number) => {
     if (!gameState.isGameActive || gameState.board[index] || gameState.winner) {
       return;
     }
+
+    const moveEndTime = Date.now();
+    const moveTime = moveEndTime - moveStartTime;
+    const newMoveTimes = [...gameState.moveTimes, moveTime];
+    const newTotalMoveTime = gameState.totalMoveTime + moveTime;
 
     let newBoard = [...gameState.board];
     let currentPieceOrder = [...pieceOrder];
@@ -61,30 +77,22 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       setRemovalCycle(prev => prev === 3 ? 4 : 3);
     }
     
-    // ... keep existing code (winner check, history update, score update, state update)
     const winner = checkWinner(newBoard);
-    
-    const newHistory = [...gameState.moveHistory];
-    const playerDisplayName = currentPlayer === 'X' ? playerName : 'Computador';
-    const moveDescription = `${playerDisplayName} jogou na posição ${index + 1}`;
-    
-    if (winner) {
-      newHistory.push(`${moveDescription} - VITÓRIA!`);
-    } else {
-      newHistory.push(moveDescription);
-    }
-
-    if (newHistory.length > 10) {
-      newHistory.splice(0, newHistory.length - 10);
-    }
 
     let newPlayerScore = gameState.playerScore;
     let newComputerScore = gameState.computerScore;
+    let newSurvivedMoves = gameState.survivedMoves;
+    
     if (winner === 'X') {
       newPlayerScore++;
     } else if (winner === 'O') {
       newComputerScore++;
+    } else if (currentPlayer === 'X') {
+      // Jogador sobreviveu mais uma jogada
+      newSurvivedMoves++;
     }
+
+    const newAverageAPM = calculateAPM(newMoveTimes);
 
     setPieceOrder(currentPieceOrder);
     setGameState(prevState => ({
@@ -95,19 +103,31 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       isGameActive: !winner,
       playerScore: newPlayerScore,
       computerScore: newComputerScore,
-      moveHistory: newHistory,
       moveCount: prevState.moveCount + 1,
       timeLeft: difficultySettings[prevState.difficulty].time,
+      survivedMoves: newSurvivedMoves,
+      totalMoveTime: newTotalMoveTime,
+      moveTimes: newMoveTimes,
+      averageAPM: newAverageAPM
     }));
-  }, [gameState, pieceOrder, playerName, removalCycle]);
+    
+    // Reset timer for next move
+    setMoveStartTime(Date.now());
+  }, [gameState, pieceOrder, removalCycle, moveStartTime, calculateAPM]);
 
-  // ... keep existing code (updateSelectedPosition, timer effects, computer move effect)
   const updateSelectedPosition = useCallback((newPosition: number) => {
     setGameState(prev => ({
       ...prev,
       selectedPosition: newPosition
     }));
   }, []);
+
+  // Reset move timer when it's player's turn
+  useEffect(() => {
+    if (gameState.currentPlayer === 'X' && gameState.isGameActive && !gameState.winner) {
+      setMoveStartTime(Date.now());
+    }
+  }, [gameState.currentPlayer, gameState.isGameActive, gameState.winner]);
 
   useEffect(() => {
     if (gameState.currentPlayer === 'X' && gameState.isGameActive && !gameState.winner && gameState.timeLeft > 0) {
@@ -124,16 +144,13 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
 
   useEffect(() => {
     if (gameState.currentPlayer === 'X' && gameState.timeLeft <= 0 && gameState.isGameActive && !gameState.winner) {
-      const newHistory = [...gameState.moveHistory, `${playerName} perdeu o turno - tempo esgotado!`];
-      
       setGameState(prev => ({
         ...prev,
         currentPlayer: 'O',
-        timeLeft: difficultySettings[prev.difficulty].time,
-        moveHistory: newHistory.slice(-10)
+        timeLeft: difficultySettings[prev.difficulty].time
       }));
     }
-  }, [gameState.timeLeft, gameState.currentPlayer, gameState.isGameActive, gameState.winner, playerName]);
+  }, [gameState.timeLeft, gameState.currentPlayer, gameState.isGameActive, gameState.winner]);
 
   useEffect(() => {
     if (gameState.currentPlayer === 'O' && gameState.isGameActive && !gameState.winner) {
@@ -151,13 +168,17 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       currentPlayer: 'X',
       winner: null,
       isGameActive: true,
-      moveHistory: [],
       moveCount: 0,
       timeLeft: difficultySettings[prevState.difficulty].time,
-      selectedPosition: 4
+      selectedPosition: 4,
+      survivedMoves: 0,
+      totalMoveTime: 0,
+      moveTimes: [],
+      averageAPM: 0
     }));
     setPieceOrder([]);
-    setRemovalCycle(3); // Reset para 3
+    setRemovalCycle(3);
+    setMoveStartTime(Date.now());
   }, []);
 
   const changeDifficulty = useCallback((newDifficulty: DifficultyLevel) => {
@@ -169,12 +190,16 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
       currentPlayer: 'X',
       winner: null,
       isGameActive: true,
-      moveHistory: [],
       moveCount: 0,
-      selectedPosition: 4
+      selectedPosition: 4,
+      survivedMoves: 0,
+      totalMoveTime: 0,
+      moveTimes: [],
+      averageAPM: 0
     }));
     setPieceOrder([]);
-    setRemovalCycle(3); // Reset para 3
+    setRemovalCycle(3);
+    setMoveStartTime(Date.now());
   }, []);
 
   return {
@@ -184,10 +209,12 @@ export const useInfiniteTicTacToe = (playerName: string, difficulty: DifficultyL
     isGameActive: gameState.isGameActive,
     playerScore: gameState.playerScore,
     computerScore: gameState.computerScore,
-    moveHistory: gameState.moveHistory,
     timeLeft: gameState.timeLeft,
     difficulty: gameState.difficulty,
     selectedPosition: gameState.selectedPosition,
+    survivedMoves: gameState.survivedMoves,
+    averageAPM: gameState.averageAPM,
+    averageMoveTime: gameState.moveTimes.length > 0 ? gameState.totalMoveTime / gameState.moveTimes.length : 0,
     makeMove,
     resetGame,
     changeDifficulty,

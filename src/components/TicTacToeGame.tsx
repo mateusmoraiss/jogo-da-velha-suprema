@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { useInfiniteTicTacToe } from '@/hooks/useInfiniteTicTacToe';
 import { difficultySettings } from '@/constants/difficultySettings';
 import { DifficultyLevel } from '@/types/gameTypes';
-import { Sparkles, RotateCcw, Settings, Clock, User } from 'lucide-react';
+import { Sparkles, RotateCcw, Settings, Clock, User, Target, Zap } from 'lucide-react';
 
 interface TicTacToeGameProps {
   playerName: string;
@@ -25,19 +25,20 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
     isGameActive,
     playerScore,
     computerScore,
-    moveHistory,
     timeLeft,
     selectedPosition,
+    survivedMoves,
+    averageAPM,
+    averageMoveTime,
     makeMove,
     resetGame,
     changeDifficulty,
     updateSelectedPosition
   } = useInfiniteTicTacToe(playerName, difficulty);
 
-  // Detecta se é uma tela pequena (mobile/tablet)
   useEffect(() => {
     const checkIsMobile = () => {
-      setIsMobile(window.innerWidth < 768); // 768px é o breakpoint do Tailwind para md
+      setIsMobile(window.innerWidth < 768);
     };
     
     checkIsMobile();
@@ -65,7 +66,6 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
   const playMoveSound = useCallback(() => {
     const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
     
-    // Create multiple oscillators for a richer sound
     const osc1 = ctx.createOscillator();
     const osc2 = ctx.createOscillator();
     const osc3 = ctx.createOscillator();
@@ -75,22 +75,18 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
     const gain3 = ctx.createGain();
     const masterGain = ctx.createGain();
     
-    // Main tone - warm sine wave
     osc1.type = 'sine';
-    osc1.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
-    osc1.frequency.exponentialRampToValueAtTime(261.63, ctx.currentTime + 0.3); // C4
+    osc1.frequency.setValueAtTime(523.25, ctx.currentTime);
+    osc1.frequency.exponentialRampToValueAtTime(261.63, ctx.currentTime + 0.3);
     
-    // Harmonic - adds warmth
     osc2.type = 'sine';
-    osc2.frequency.setValueAtTime(659.25, ctx.currentTime); // E5
-    osc2.frequency.exponentialRampToValueAtTime(329.63, ctx.currentTime + 0.3); // E4
+    osc2.frequency.setValueAtTime(659.25, ctx.currentTime);
+    osc2.frequency.exponentialRampToValueAtTime(329.63, ctx.currentTime + 0.3);
     
-    // Sub harmonic - adds depth
     osc3.type = 'triangle';
-    osc3.frequency.setValueAtTime(392.00, ctx.currentTime); // G4
-    osc3.frequency.exponentialRampToValueAtTime(196.00, ctx.currentTime + 0.3); // G3
+    osc3.frequency.setValueAtTime(392.00, ctx.currentTime);
+    osc3.frequency.exponentialRampToValueAtTime(196.00, ctx.currentTime + 0.3);
     
-    // Gain envelopes for smooth attack and decay
     gain1.gain.setValueAtTime(0, ctx.currentTime);
     gain1.gain.linearRampToValueAtTime(0.1, ctx.currentTime + 0.02);
     gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
@@ -105,7 +101,6 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
     
     masterGain.gain.setValueAtTime(0.8, ctx.currentTime);
     
-    // Connect the audio graph
     osc1.connect(gain1);
     osc2.connect(gain2);
     osc3.connect(gain3);
@@ -116,7 +111,6 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
     
     masterGain.connect(ctx.destination);
     
-    // Start and stop
     const startTime = ctx.currentTime;
     const stopTime = startTime + 0.5;
     
@@ -128,29 +122,24 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
     osc2.stop(stopTime);
     osc3.stop(stopTime);
     
-    // Clean up
     setTimeout(() => ctx.close(), 600);
   }, []);
 
-  // Controles de teclado apenas para desktop
   useEffect(() => {
-    if (isMobile) return; // Não adiciona controles de teclado no mobile
+    if (isMobile) return;
     
     const handleKeyPress = (event: KeyboardEvent) => {
       const key = event.key.toLowerCase();
       
-      // Se o jogo terminou, ESPAÇO reinicia (com delay)
       if (key === ' ' && winner && canRestart) {
         event.preventDefault();
         resetGame();
         return;
       }
       
-      // Controles normais durante o jogo
       if (!winner && isGameActive) {
         let newPosition = selectedPosition;
 
-        // Arrow keys and WASD support
         if ((key === 'arrowup' || key === 'w') && selectedPosition > 2) {
           newPosition = selectedPosition - 3;
         } else if ((key === 'arrowdown' || key === 's') && selectedPosition < 6) {
@@ -179,18 +168,15 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
   const handleCellClick = (index: number) => {
     if (currentPlayer === 'X' && isGameActive && !winner && board[index] === null) {
       if (isMobile) {
-        // No mobile, clique direto faz a jogada
         makeMove(index);
         playMoveSound();
       } else {
-        // No desktop, apenas seleciona a célula
         updateSelectedPosition(index);
       }
     }
   };
 
   const handleCellHover = (index: number) => {
-    // Hover apenas funciona no desktop
     if (!isMobile && currentPlayer === 'X' && isGameActive && !winner) {
       updateSelectedPosition(index);
     }
@@ -198,7 +184,7 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
 
   const getCellClass = (index: number) => {
     const baseClass = "w-20 h-20 bg-gray-800/50 backdrop-blur-sm border-2 border-gray-600 rounded-xl flex items-center justify-center text-3xl font-bold cursor-pointer transition-all duration-300 hover:bg-gray-700/50 hover:scale-105 hover:shadow-lg hover:shadow-blue-500/20";
-    const isSelected = !isMobile && index === selectedPosition; // Seleção apenas no desktop
+    const isSelected = !isMobile && index === selectedPosition;
     const selectedClass = isSelected ? "ring-2 ring-yellow-400 ring-opacity-75 bg-yellow-500/10" : "";
     
     if (board[index] === 'X') return `${baseClass} ${selectedClass} text-blue-400 bg-blue-500/20 border-blue-500/40 shadow-lg shadow-blue-500/20`;
@@ -248,7 +234,6 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
             </div>
           </div>
 
-          {/* Container fixo para o timer - sempre presente */}
           <div className="h-16 flex flex-col justify-center">
             {currentPlayer === 'X' && isGameActive && !winner && (
               <div className="space-y-2">
@@ -268,7 +253,6 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
             )}
           </div>
 
-          {/* Container fixo para instruções - adapta para mobile */}
           <div className="h-6 text-center text-xs text-gray-400 flex items-center justify-center">
             {winner ? (
               <span>{canRestart ? (isMobile ? 'Toque "Jogar Novamente"' : 'ESPAÇO para reiniciar') : 'Aguarde 1 segundo...'}</span>
@@ -282,7 +266,6 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
             )}
           </div>
 
-          {/* Container fixo para status do jogo */}
           <div className="h-20 text-center flex flex-col justify-center">
             {winner ? (
               <div className="space-y-4">
@@ -343,23 +326,36 @@ const TicTacToeGame = ({ playerName, difficulty, onDifficultyChange, onNameChang
             ))}
           </div>
 
-          {/* Container fixo para o histórico */}
           <div className="text-center h-32 flex flex-col justify-start">
-            <div className="text-sm text-gray-400 mb-2">Histórico de Jogadas:</div>
-            <div className="text-sm text-gray-300 h-24 overflow-y-auto flex-1">
-              {moveHistory.length > 0 ? (
-                <div className="space-y-1">
-                  {moveHistory.slice(-5).reverse().map((move, index) => (
-                    <div key={index} className="py-0.5">
-                      {move}
+            <div className="text-sm text-gray-400 mb-2">Estatísticas de Desempenho:</div>
+            <div className="text-sm text-gray-300 flex-1 space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="flex items-center justify-center gap-2 bg-gray-800/30 rounded-lg p-3">
+                  <Target className="w-4 h-4 text-green-400" />
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-green-400">{survivedMoves}</div>
+                    <div className="text-xs text-gray-400">Jogadas Sobrevividas</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-center gap-2 bg-gray-800/30 rounded-lg p-3">
+                  <Zap className="w-4 h-4 text-blue-400" />
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-blue-400">{averageAPM}</div>
+                    <div className="text-xs text-gray-400">APM Médio</div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-center gap-2 bg-gray-800/30 rounded-lg p-3">
+                  <Clock className="w-4 h-4 text-purple-400" />
+                  <div className="text-center">
+                    <div className="text-lg font-bold text-purple-400">
+                      {averageMoveTime > 0 ? (averageMoveTime / 1000).toFixed(1) : '0.0'}s
                     </div>
-                  ))}
+                    <div className="text-xs text-gray-400">Tempo Médio/Jogada</div>
+                  </div>
                 </div>
-              ) : (
-                <div className="text-gray-500 italic pt-8">
-                  Nenhuma jogada ainda
-                </div>
-              )}
+              </div>
             </div>
           </div>
         </CardContent>
