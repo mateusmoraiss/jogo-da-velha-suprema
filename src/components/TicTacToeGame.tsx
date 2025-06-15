@@ -212,6 +212,14 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, onDifficultyChange,
     return keyOption?.label || 'Espaço';
   };
 
+  const getWinnerMessage = () => {
+    if (winner === 'X') {
+      return `🎉 Parabéns, você venceu com o APM ${averageAPM}! 🎉`;
+    } else {
+      return `😔 Você perdeu, sobreviveu a ${survivedMoves} jogadas`;
+    }
+  };
+
   return (
     <div className="w-full max-w-2xl mx-auto">
       <Card className="bg-gray-900/80 backdrop-blur-lg border-gray-700/50 shadow-2xl">
@@ -277,8 +285,8 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, onDifficultyChange,
           <div className="h-20 text-center flex flex-col justify-center">
             {winner ? (
               <div className="space-y-4">
-                <div className="text-2xl font-bold text-yellow-400">
-                  🎉 {winner === 'X' ? playerName : 'Computador'} Venceu! 🎉
+                <div className="text-xl font-bold text-yellow-400">
+                  {getWinnerMessage()}
                 </div>
                 <div className="flex gap-2 justify-center flex-wrap">
                   <Button 

@@ -53,7 +53,7 @@ const PlayerNameDialog = ({ onStart, onTutorial, onCredits, onOptions }: PlayerN
             className="w-full bg-gray-800/30 border-gray-600 text-gray-300 hover:bg-gray-700/50 py-2"
           >
             <BookOpen className="w-4 h-4 mr-2" />
-            Ver Tutorial dos Controles
+            Tutorial
           </Button>
 
           <Button 
