@@ -3,6 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Gamepad2, BookOpen, Award, Settings } from 'lucide-react';
+import { Pistol } from 'lucide-react';
 
 interface PlayerNameDialogProps {
   onStart: () => void;
@@ -20,8 +21,11 @@ const PlayerNameDialog = ({ onStart, onTutorial, onCredits, onOptions }: PlayerN
             <Gamepad2 className="w-12 h-12 text-blue-400 mb-2" />
           </div>
           <div className="space-y-2">
-            <CardTitle className="text-2xl font-bold flex items-center justify-center gap-2">
+            <div className="flex items-center justify-center gap-2 mb-2">
               <span className="text-3xl">👵</span>
+              <Pistol className="w-6 h-6 text-yellow-400" />
+            </div>
+            <CardTitle className="text-2xl font-bold flex items-center justify-center">
               <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
                 Velha Suprema
               </span>
