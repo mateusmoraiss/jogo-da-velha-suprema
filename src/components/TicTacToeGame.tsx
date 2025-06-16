@@ -163,13 +163,13 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
       if (!winner && isGameActive) {
         let newPosition = selectedPosition;
 
-        if ((key === 'arrowup' || key === 'w') && selectedPosition > 2) {
+        if (key === 'w' && selectedPosition > 2) {
           newPosition = selectedPosition - 3;
-        } else if ((key === 'arrowdown' || key === 's') && selectedPosition < 6) {
+        } else if (key === 's' && selectedPosition < 6) {
           newPosition = selectedPosition + 3;
-        } else if ((key === 'arrowleft' || key === 'a') && selectedPosition % 3 !== 0) {
+        } else if (key === 'a' && selectedPosition % 3 !== 0) {
           newPosition = selectedPosition - 1;
-        } else if ((key === 'arrowright' || key === 'd') && selectedPosition % 3 !== 2) {
+        } else if (key === 'd' && selectedPosition % 3 !== 2) {
           newPosition = selectedPosition + 1;
         }
         
@@ -310,7 +310,7 @@ const TicTacToeGame = ({ playerName, difficulty, confirmKey, customKey = '', onD
                 <span>
                   {isMobile 
                     ? 'Toque na célula para jogar' 
-                    : `Use WASD ou setas para navegar • Mouse para selecionar • ${getConfirmKeyLabel()} para confirmar`
+                    : `Use WASD para navegar • Mouse para selecionar • ${getConfirmKeyLabel()} para confirmar`
                   }
                 </span>
               )}

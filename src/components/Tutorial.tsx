@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -46,6 +47,47 @@ const Tutorial = ({ onClose }: TutorialProps) => {
                  <p>O jogo é <strong className="text-white">infinito</strong>. Quando o tabuleiro encher, as peças mais antigas de cada jogador são removidas automaticamente.</p>
                  <p>O tempo é seu inimigo. Se o cronômetro zerar, você perde a vez automaticamente.</p>
                  <p>Apenas <strong className="text-white">SHIFT</strong> confirma jogadas - mouse e teclas apenas selecionam!</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Recomendações de Treinamento */}
+          <div className="border-t border-gray-700 pt-6">
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 text-2xl font-semibold text-cyan-400">
+                <Gamepad2 className="w-8 h-8" />
+                <span>Estilos de Treinamento</span>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="bg-gradient-to-br from-blue-900/30 to-purple-900/30 border border-blue-600/50 p-4 rounded-lg space-y-3">
+                  <div className="flex items-center gap-2 text-lg font-semibold text-blue-400">
+                    <Keyboard className="w-6 h-6" />
+                    <span>Treinamento WASD</span>
+                  </div>
+                  <p className="text-gray-300 text-sm">
+                    <strong className="text-white">Recomendado para APM!</strong> Use WASD para navegar pelo tabuleiro. Este método treina:
+                  </p>
+                  <ul className="text-gray-300 text-sm space-y-1 ml-4">
+                    <li>• <strong className="text-white">APM (Ações Por Minuto)</strong> - Velocidade de execução</li>
+                    <li>• <strong className="text-white">Velocidade de Raciocínio</strong> - Decisões rápidas</li>
+                    <li>• <strong className="text-white">Coordenação Mão-Cérebro</strong> - Automatização</li>
+                  </ul>
+                </div>
+                
+                <div className="bg-gradient-to-br from-cyan-900/30 to-teal-900/30 border border-cyan-600/50 p-4 rounded-lg space-y-3">
+                  <div className="flex items-center gap-2 text-lg font-semibold text-cyan-400">
+                    <Mouse className="w-6 h-6" />
+                    <span>Treinamento Mouse</span>
+                  </div>
+                  <p className="text-gray-300 text-sm">
+                    <strong className="text-white">Ótimo para reflexos!</strong> Use o mouse para selecionar posições. Este método treina:
+                  </p>
+                  <ul className="text-gray-300 text-sm space-y-1 ml-4">
+                    <li>• <strong className="text-white">Reflexos</strong> - Reações instantâneas</li>
+                    <li>• <strong className="text-white">Precisão</strong> - Mira e controle</li>
+                    <li>• <strong className="text-white">Velocidade</strong> - Movimentos rápidos</li>
+                  </ul>
+                </div>
               </div>
             </div>
           </div>
@@ -112,8 +154,7 @@ const Tutorial = ({ onClose }: TutorialProps) => {
               </div>
               <div className="text-gray-300 text-sm flex-grow flex flex-col">
                 <div className="flex-grow space-y-2">
-                  <p><strong className="text-white">Setas ↑↓←→:</strong> Navegam entre os quadrados</p>
-                  <p><strong className="text-white">WASD:</strong> Alternativa às setas (W=cima, A=esquerda, S=baixo, D=direita)</p>
+                  <p><strong className="text-white">WASD:</strong> Navegam entre os quadrados (W=cima, A=esquerda, S=baixo, D=direita)</p>
                   <p><strong className="text-white">SHIFT (padrão):</strong> Confirma a jogada na posição selecionada</p>
                 </div>
                 <div className="bg-yellow-900/30 border border-yellow-600/50 p-2 rounded mt-2">
