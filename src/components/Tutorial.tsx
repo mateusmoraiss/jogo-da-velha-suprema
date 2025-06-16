@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -13,8 +12,9 @@ const Tutorial = ({ onClose }: TutorialProps) => {
     <div className="w-full max-w-4xl mx-auto">
       <Card className="bg-gray-900/90 backdrop-blur-lg border-gray-700/50 shadow-2xl">
         <CardHeader className="text-center space-y-4">
-          <CardTitle className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
-            📖 Tutorial - Velha Suprema
+          <CardTitle className="text-3xl font-bold flex items-center justify-center gap-3">
+            <span>📖</span>
+            <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">Tutorial - Velha Suprema</span>
           </CardTitle>
           <p className="text-gray-300">Domine a arte da velocidade e estratégia!</p>
         </CardHeader>
