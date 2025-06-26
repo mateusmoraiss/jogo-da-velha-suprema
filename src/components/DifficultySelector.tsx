@@ -26,7 +26,7 @@ export const difficulties = [
     id: 'medium' as DifficultyLevel,
     name: 'Muito Fácil',
     icon: Target,
-    time: '7s',
+    time: '2s',
     description: 'Tempo confortável.',
     color: 'from-blue-600 to-blue-400',
     bgColor: 'bg-blue-500/10 border-blue-500/30'
@@ -35,7 +35,7 @@ export const difficulties = [
     id: 'hard' as DifficultyLevel,
     name: 'Fácil',
     icon: Brain,
-    time: '5s',
+    time: '1.6s',
     description: 'Pense rápido!',
     color: 'from-purple-600 to-purple-400',
     bgColor: 'bg-purple-500/10 border-purple-500/30'
@@ -44,7 +44,7 @@ export const difficulties = [
     id: 'nightmare' as DifficultyLevel,
     name: 'Médio',
     icon: Sword,
-    time: '2s',
+    time: '1.3s',
     description: 'Pressão crescente.',
     color: 'from-violet-600 to-pink-600',
     bgColor: 'bg-violet-500/10 border-violet-500/30'
@@ -53,7 +53,7 @@ export const difficulties = [
     id: 'insane' as DifficultyLevel,
     name: 'Difícil',
     icon: Zap,
-    time: '1.2s',
+    time: '1.1s',
     description: 'Reflexos rápidos.',
     color: 'from-yellow-600 to-orange-600',
     bgColor: 'bg-yellow-500/10 border-yellow-500/30'
