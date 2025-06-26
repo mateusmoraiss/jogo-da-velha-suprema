@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -18,7 +17,7 @@ export const difficulties = [
     id: 'easy' as DifficultyLevel,
     name: 'Divino',
     icon: Shield,
-    time: 10,
+    time: '∞',
     description: 'Ideal para iniciantes.',
     color: 'from-green-600 to-green-400',
     bgColor: 'bg-green-500/10 border-green-500/30'
@@ -27,7 +26,7 @@ export const difficulties = [
     id: 'medium' as DifficultyLevel,
     name: 'Muito Fácil',
     icon: Target,
-    time: 7,
+    time: '7s',
     description: 'Tempo confortável.',
     color: 'from-blue-600 to-blue-400',
     bgColor: 'bg-blue-500/10 border-blue-500/30'
@@ -36,7 +35,7 @@ export const difficulties = [
     id: 'hard' as DifficultyLevel,
     name: 'Fácil',
     icon: Brain,
-    time: 5,
+    time: '5s',
     description: 'Pense rápido!',
     color: 'from-purple-600 to-purple-400',
     bgColor: 'bg-purple-500/10 border-purple-500/30'
@@ -45,7 +44,7 @@ export const difficulties = [
     id: 'nightmare' as DifficultyLevel,
     name: 'Médio',
     icon: Sword,
-    time: 3.5,
+    time: '2s',
     description: 'Pressão crescente.',
     color: 'from-violet-600 to-pink-600',
     bgColor: 'bg-violet-500/10 border-violet-500/30'
@@ -54,7 +53,7 @@ export const difficulties = [
     id: 'insane' as DifficultyLevel,
     name: 'Difícil',
     icon: Zap,
-    time: 2,
+    time: '1.2s',
     description: 'Reflexos rápidos.',
     color: 'from-yellow-600 to-orange-600',
     bgColor: 'bg-yellow-500/10 border-yellow-500/30'
@@ -63,7 +62,7 @@ export const difficulties = [
     id: 'godlike' as DifficultyLevel,
     name: 'Pesadelo',
     icon: Skull,
-    time: 1.2,
+    time: '0.9s',
     description: 'Quase impossível.',
     color: 'from-red-600 to-red-400',
     bgColor: 'bg-red-500/10 border-red-500/30'
@@ -72,7 +71,7 @@ export const difficulties = [
     id: 'armageddon' as DifficultyLevel,
     name: 'Armagedon',
     icon: Flame,
-    time: 0.6,
+    time: '0.6s',
     description: '💀 Terror puro.',
     color: 'from-red-700 via-orange-600 to-yellow-500',
     bgColor: 'bg-gradient-to-r from-red-500/20 to-orange-500/20 border-red-600/50 shadow-lg shadow-red-500/20'
@@ -134,7 +133,7 @@ const DifficultySelector = ({ onSelect, onBack, onTutorial }: DifficultySelector
                       {difficulty.name}
                     </div>
                     <Badge variant="outline" className="mt-2 text-xs bg-gray-800/50 text-gray-300 border-gray-600">
-                      {difficulty.time}s por jogada
+                      {difficulty.time} por jogada
                     </Badge>
                     <p className="text-sm text-gray-400 mt-2">{difficulty.description}</p>
                   </div>
